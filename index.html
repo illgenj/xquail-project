@@ -1,0 +1,2710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>xQuail</title>
+  <style>
+    /* Base Styles */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f2f5;
+      margin: 0; 
+      padding: 0;
+    }
+
+    /* Container Styling */
+    .container {
+      max-width: 1400px; 
+      margin: auto; 
+      padding: 20px; 
+      background-color: #fff; 
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      position: relative; /* Enables positioning of the gear button */
+    }
+
+    /* Headings */
+    h1, h2 {
+      text-align: center; 
+      margin-top: 0; 
+      font-weight: normal;
+      color: #333;
+    }
+
+    /* Section Wrapper */
+    .section {
+      border: 1px solid #ddd;
+      padding: 15px;
+      border-radius: 5px;
+      background-color: #fafafa;
+      margin-bottom: 20px;
+    }
+
+    /* Fieldset Styling */
+    fieldset {
+      border: 1px solid #ccc;
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+    }
+
+    legend {
+      padding: 0 10px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    /* Labels for Input Fields */
+    label {
+      display: block; 
+      margin-top: 20px; 
+      font-weight: bold; 
+      color: #333;
+    }
+
+    /* Input and Textarea Styling */
+    textarea, input[type="date"], input[type="number"] {
+      width: 100%; 
+      padding: 10px; 
+      margin-top: 5px; 
+      box-sizing: border-box; 
+      border: 1px solid #ccc; 
+      border-radius: 4px; 
+      resize: vertical; 
+      font-size: 14px;
+    }
+
+    /* Help Text Below Inputs */
+    .help-text {
+      font-size: 12px; 
+      color: #666; 
+      margin-top: 5px;
+    }
+
+    /* Layout for Input Rows */
+    .input-row {
+      display: flex; 
+      flex-wrap: wrap; 
+      gap: 20px; 
+      margin-top: 15px;
+    }
+
+    /* Individual Input Groups */
+    .input-group {
+      flex: 1; 
+      min-width: 200px;
+    }
+
+    /* Button Styling */
+    button {
+      padding: 10px 20px; 
+      margin: 20px 10px 0 0; 
+      cursor: pointer; 
+      border: none;
+      background-color: #007BFF; 
+      color: #fff; 
+      border-radius: 4px; 
+      font-size: 16px; 
+      transition: background-color 0.3s;
+      position: relative;
+    }
+    button:hover { background-color: #0056b3; }
+    button:disabled { background-color: #cccccc; cursor: not-allowed; }
+    .btn-green { background-color: #28a745; }
+    .btn-green:hover { background-color: #1e7e34; }
+
+    /* New Button Style for Cancel */
+    .btn-red { 
+      background-color: #dc3545; 
+    }
+    .btn-red:hover { 
+      background-color: #c82333; 
+    }
+
+    /* Gear Button for Reset and Settings */
+    .gear-button {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 30px;
+      height: 30px;
+      background-color: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 20px;
+    }
+    .gear-button:hover {
+      color: #007BFF;
+    }
+
+    /* Table Styling */
+    table {
+      width: 100%; 
+      border-collapse: collapse; 
+      margin-top: 30px; 
+      table-layout: fixed;
+      font-size: 14px;
+    }
+
+    th, td {
+      border: 1px solid #ddd; 
+      padding: 8px; 
+      text-align: center; 
+      word-wrap: break-word; 
+      position: relative;
+    }
+
+    th {
+      background-color: #f8f9fa; 
+      position: sticky; 
+      top: 0; 
+      z-index: 2; 
+      text-align: center;
+    }
+
+    /* Sticky Column for Assignment Names */
+    .assignment-name-cell {
+      background-color: #f1f1f1; 
+      position: sticky; 
+      left: 0; 
+      z-index: 3; 
+      text-align: left; 
+      font-weight: bold;
+      min-width: 120px;
+    }
+
+    /* Scrollable Container for Tables */
+    .scrollable { overflow-x: auto; }
+
+    /* Status Indicators */
+    .warning { background-color: #fffbdd; color: #333; }
+    .unavailable { background-color: #ffe0e0; cursor: pointer; }
+    .hard-assigned { font-weight: bold; color: #333; }
+    .highlight-2 { background-color: #c6f7f2 !important; }
+    .highlight-3 { background-color: #98faf0 !important; }
+    .highlight-2-orange { background-color: #ffe0b3 !important; }
+    .highlight-3-orange { background-color: #ffb366 !important; }
+
+    /* Notification Styling */
+    #notification {
+      position: fixed; 
+      top: 20px; 
+      right: 20px; 
+      background-color: #333; 
+      color: #fff;
+      padding: 15px 25px; 
+      border-radius: 5px; 
+      opacity: 0; 
+      transition: opacity 0.5s; 
+      z-index: 1000; 
+      font-size: 14px;
+    }
+    #notification.show { opacity: 1; }
+
+    /* Undo and Redo Buttons Container */
+    #undoRedoContainer {
+      position: fixed; 
+      bottom: 20px; 
+      right: 20px; 
+      display: flex; 
+      gap: 10px; 
+      z-index: 1000;
+    }
+
+    /* Conflicts Section */
+    #conflictsSection {
+      margin-top: 30px; 
+      padding: 15px; 
+      border: 1px solid #ddd; 
+      background-color: #f9f9f9; 
+      border-radius: 5px;
+    }
+    #conflictsSection h3 { margin-bottom: 10px; }
+    .conflicts-list { list-style: none; padding-left: 0; }
+    .conflicts-list li { margin-bottom: 5px; }
+
+    /* Total Assignments Styling */
+    .total-assignments { font-weight: bold; }
+    tfoot td { background-color: #f8f9fa; font-weight: bold; }
+    .assignment-select { margin-top: 5px; width: 100%; }
+
+    /* Header and Footer Highlighting */
+    .highlight-header-footer { background-color: #ffffcc; }
+    .cut-position { background-color: #bcbcbc !important; color: #fff; }
+
+    /* Error Message Styling */
+    .error { color: red; font-weight: bold; }
+
+    /* Help Bar for Controls */
+    .help-bar {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+    .help-bar button { margin: 0; }
+    .help-bar .iteration-controls {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin-left: 10px;
+    }
+    .help-bar .iteration-controls input {
+      width: 80px; /* Accommodates up to 5 digits */
+    }
+
+    /* Toggle Log Button */
+    #toggleLogBtn {
+      position: fixed;
+      top: 60px;
+      right: 20px;
+      z-index: 1001;
+      padding: 10px 20px;
+      cursor: pointer;
+      border: none;
+      background-color: #6c757d;
+      color: #fff;
+      border-radius: 4px;
+      font-size: 14px;
+      transition: background-color 0.3s;
+    }
+    #toggleLogBtn:hover { background-color: #5a6268; }
+
+    /* Notification Log Styling */
+    #notificationLog {
+      display: none;
+      position: fixed;
+      top: 100px;
+      right: 20px;
+      width: 300px;
+      max-height: 400px;
+      overflow-y: auto;
+      background-color: rgba(0,0,0,0.8);
+      color: #fff;
+      padding: 10px;
+      border-radius: 5px;
+      z-index: 1001;
+    }
+    #notificationLog h3 {
+      margin-top: 0;
+      text-align: center;
+    }
+    #notificationLogList {
+      list-style: none;
+      padding-left: 0;
+      max-height: 350px;
+      overflow-y: auto;
+    }
+    #notificationLogList li {
+      margin-bottom: 5px;
+      font-size: 12px;
+    }
+
+    /* Modal Styles */
+    .modal {
+      display: none; /* Hidden by default */
+      position: fixed; /* Stay in place */
+      z-index: 1002; /* Sit on top */
+      left: 0;
+      top: 0;
+      width: 100%; /* Full width */
+      height: 100%; /* Full height */
+      overflow: auto; /* Enable scroll if needed */
+      background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    }
+
+    .modal-content {
+      background-color: #fefefe;
+      margin: 10% auto; /* 10% from the top and centered */
+      padding: 20px;
+      border: 1px solid #888;
+      width: 400px; /* Increased width for more settings */
+      border-radius: 5px;
+    }
+
+    .close-button {
+      color: #aaa;
+      float: right;
+      font-size: 24px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .close-button:hover,
+    .close-button:focus {
+      color: black;
+      text-decoration: none;
+    }
+
+    /* Hover Highlights for Table Cells */
+    td:hover {
+      background-color: #eef;
+    }
+
+    /* Active Button States */
+    /* Removed original button active states */
+
+    /* Tooltip Styling */
+    button[title]:hover::after {
+      content: attr(title);
+      position: absolute;
+      background: #333;
+      color: #fff;
+      padding: 3px 6px;
+      border-radius: 3px;
+      font-size: 12px;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      white-space: nowrap;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+      z-index: 1003;
+    }
+
+    /* Prominent Action Buttons */
+    #initializeScheduleBtn, #generateScheduleBtn {
+      font-weight: bold;
+    }
+
+    /* Loading Spinner */
+    .loading-spinner {
+      display: inline-block;
+      width: 16px; 
+      height: 16px;
+      border: 2px solid #ccc;
+      border-top-color: #007BFF;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      vertical-align: middle;
+      margin-left: 5px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Toggle Switch Styles */
+    .toggle-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 15px;
+    }
+    .toggle-group label {
+      margin-right: 10px;
+      font-weight: normal;
+      color: #333;
+    }
+    .toggle-group input[type="checkbox"] {
+      width: 40px;
+      height: 20px;
+      -webkit-appearance: none;
+      background: #c6c6c6;
+      outline: none;
+      border-radius: 20px;
+      position: relative;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .toggle-group input[type="checkbox"]:checked {
+      background: #28a745;
+    }
+    .toggle-group input[type="checkbox"]::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 16px;
+      height: 16px;
+      background: white;
+      border-radius: 50%;
+      transition: 0.3s;
+    }
+    .toggle-group input[type="checkbox"]:checked::after {
+      left: 22px;
+    }
+
+    /* Restore Defaults Button Styling */
+    .btn-default {
+      background-color: #6c757d;
+    }
+    .btn-default:hover {
+      background-color: #5a6268;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>xQuail</h1>
+
+    <!-- Gear Icon Button to Open Settings Modal -->
+    <button id="settingsBtn" class="gear-button" title="Settings">
+      &#9881;
+    </button>
+
+    <!-- Fieldset for Employee and Assignment Data -->
+    <fieldset class="section">
+      <legend>Data Entry</legend>
+
+      <!-- Section for Entering Employee Data -->
+      <label for="employeeData">Employee Data (one per line):</label>
+      <textarea id="employeeData" placeholder="Name,Qualification1,Qualification2,...&#10;Example: Alice,AM Support,PM Support"></textarea>
+      <div class="help-text">Format: EmployeeName,Qual1,Qual2,... Employees will never be auto-scheduled to an assignment they are not qualified for.</div>
+
+      <!-- Section for Entering Assignment Data -->
+      <label for="assignmentsData">Assignments Data (one per line):</label>
+      <textarea id="assignmentsData" placeholder="AssignmentName,NumberOfPositions,Group&#10;Example: PM,2,Support"></textarea>
+      <div class="help-text">Format: AssignmentName,PositionsCount,GroupName (Group optional). Grouped assignments will never be assigned back-to-back.</div>
+
+      <!-- Input Row for Start Date and Number of Weeks -->
+      <div class="input-row">
+        <div class="input-group">
+          <label for="startDate">Start Date:</label>
+          <input type="date" id="startDate">
+        </div>
+        <div class="input-group">
+          <label for="weeks">Number of Weeks:</label>
+          <input type="number" id="weeks" value="12" min="1" max="999">
+        </div>
+      </div>
+    </fieldset>
+
+    <!-- Control Buttons and Iteration Settings -->
+    <div class="help-bar section" title="Control various scheduling functions">
+      <button id="initializeScheduleBtn" title="Initialize the schedule based on entered data">Initialize Schedule</button>
+      <button id="updateDataBtn" title="Update existing data without resetting the schedule">Update Data</button>
+      <button id="generateScheduleBtn" disabled title="Generate the schedule based on current data">Generate Schedule</button>
+      <button id="toggleViewBtn" class="btn-green" style="display:none;" title="Switch between Assignment and Employee views">Switch View</button>
+      <button id="exportCSVBtn" class="btn-green" style="display:none;" title="Export the current schedule as a CSV file">Export CSV</button>
+
+      <!-- Removed Original Identical Weeks and Consecutive Weeks Buttons -->
+
+      <div class="iteration-controls" style="display:none;">
+        <label for="iterationCount">Iterations:</label>
+        <input type="number" id="iterationCount" value="10000" min="1" max="99999">
+        <button id="runIterationsBtn" class="btn-green" title="Run multiple scheduling iterations to optimize the schedule">Run Iterations</button>
+        <button id="cancelIterationsBtn" class="btn-red" style="display: none;" title="Cancel the ongoing iterations">Cancel</button>
+      </div>
+    </div>
+
+    <!-- Display Current View Type -->
+    <h2>Schedule View: <span id="viewType"></span></h2>
+    <div class="scrollable">
+      <table id="assignmentTable"></table>
+      <table id="employeeTable" style="display:none;"></table>
+      <div id="conflictsSection" style="display:none;">
+        <h3>Conflicts:</h3>
+        <ul class="conflicts-list" id="conflictsList"></ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notification Element for User Feedback -->
+  <div id="notification"></div>
+
+  <!-- Toggle Log Button -->
+  <button id="toggleLogBtn">Show Log</button>
+
+  <!-- Notification Log -->
+  <div id="notificationLog">
+    <h3>Notification Log</h3>
+    <ul id="notificationLogList"></ul>
+  </div>
+
+  <!-- Container for Undo and Redo Buttons -->
+  <div id="undoRedoContainer">
+    <button id="undoBtn" disabled>Undo</button>
+    <button id="redoBtn" disabled>Redo</button>
+  </div>
+
+  <!-- Settings Modal -->
+  <div id="settingsModal" class="modal">
+    <div class="modal-content">
+      <span class="close-button">&times;</span>
+      <h2>Settings</h2>
+      
+      <!-- Max Assignment Percentage -->
+      <label for="maxAssignmentPercentage">Max Assignment Percentage:</label>
+      <input type="number" id="maxAssignmentPercentageInput" min="0" max="100" step="1" value="50">
+      <div class="help-text">Set the maximum percentage of weeks an employee can be auto-scheduled. For example, 50% for 6 weeks out of 12.</div>
+      
+      <!-- Toggle Switches for Identical Weeks and Consecutive Weeks -->
+      <div class="toggle-group">
+        <label for="identicalWeeksToggle">Identical Weeks</label>
+        <input type="checkbox" id="identicalWeeksToggle" />
+      </div>
+      
+      <div class="toggle-group">
+        <label for="consecutiveWeeksToggle">Consecutive Weeks</label>
+        <input type="checkbox" id="consecutiveWeeksToggle" />
+      </div>
+      
+      <!-- New Settings: Max Consecutive Weeks -->
+      <label for="maxConsecutiveWeeksSingle">Max Consecutive Weeks (Single-Qualified Employees):</label>
+      <input type="number" id="maxConsecutiveWeeksSingle" min="1" value="1">
+      <div class="help-text">Set the maximum number of consecutive weeks a single-qualified employee can be scheduled.</div>
+      
+      <label for="maxConsecutiveWeeksMulti">Max Consecutive Weeks (Multi-Qualified Employees):</label>
+      <input type="number" id="maxConsecutiveWeeksMulti" min="1" value="2">
+      <div class="help-text">Set the maximum number of consecutive weeks a multi-qualified employee can be scheduled.</div>
+      
+      <!-- Buttons -->
+      <button id="saveSettingsBtn" class="btn-green" title="Save the current settings">Save Settings</button>
+      <button id="restoreDefaultsBtn" class="btn-default" title="Restore all settings to their default values">Restore Defaults</button>
+    </div>
+  </div>
+
+  <script>
+    // DataModel Class: Manages all data and scheduling logic
+    class DataModel {
+      constructor() {
+        this.resetData();
+        // Define default settings
+        this.defaultSettings = {
+          maxAssignmentPercentage: 0.5, // 50%
+          highlightingEnabled: false, // Identical Weeks
+          multiAssignmentHighlightingEnabled: true, // Consecutive Weeks
+          maxConsecutiveWeeksSingle: 1, // Single-Qualified Employees
+          maxConsecutiveWeeksMulti: 2 // Multi-Qualified Employees
+        };
+        // Initialize settings with defaults
+        this.maxAssignmentPercentage = this.defaultSettings.maxAssignmentPercentage;
+        this.highlightingEnabled = this.defaultSettings.highlightingEnabled;
+        this.multiAssignmentHighlightingEnabled = this.defaultSettings.multiAssignmentHighlightingEnabled;
+        this.maxConsecutiveWeeksSingle = this.defaultSettings.maxConsecutiveWeeksSingle;
+        this.maxConsecutiveWeeksMulti = this.defaultSettings.maxConsecutiveWeeksMulti;
+      }
+
+      // Resets all data structures to their initial states
+      resetData() {
+        this.employees = [];
+        this.assignments = [];
+        this.schedule = [];
+        this.currentPositions = {};
+        this.weekLabels = [];
+        this.totalWeeks = 0;
+        this.positionsCutWeeks = new Map();
+        this.undoStack = [];
+        this.redoStack = [];
+        this.currentView = 'assignment';
+        this.forbiddenGroups = new Map();
+        this.assignmentToQualified = new Map();
+      }
+
+      initializeFromInput(employeeInput, assignmentsInput, startDateInput, weeksCount) {
+        this.validateInput(employeeInput, assignmentsInput, startDateInput, weeksCount);
+        this.parseEmployees(employeeInput);
+        this.parseAssignments(assignmentsInput);
+        this.totalWeeks = weeksCount;
+        const startDate = new Date(startDateInput + 'T00:00:00');
+        this.generateWeekLabels(startDate, weeksCount);
+        this.initSchedule();
+        this.computeForbiddenGroups();
+        this.precomputeQualifiedEmployees();
+      }
+
+      updateDataFromInput(employeeInput, assignmentsInput) {
+        const newEmployees = this.parseEmployeesForUpdate(employeeInput);
+        const newAssignments = this.parseAssignmentsForUpdate(assignmentsInput);
+
+        const existingEmployeeMap = new Map(this.employees.map(emp => [emp.name, emp]));
+        const newEmployeeNames = new Set(newEmployees.map(emp => emp.name));
+
+        // Add new employees
+        newEmployees.forEach(emp => {
+          if (!existingEmployeeMap.has(emp.name)) {
+            this.employees.push(Object.assign(emp, {
+              name: emp.name,
+              quals: emp.quals,
+              isSingleQual: emp.quals.length === 1,
+              count: 0,
+              history: {},
+              assignmentHistory: {},
+              assignmentCountById: {},
+              lastAssignedWeek: -Infinity,
+              lastAssignedJob: {},
+              lastAssignedWeeks: [],
+              unavailableWeeks: [],
+              hardAssignments: {}
+            }));
+            this.forbiddenGroups.set(emp.name, new Map());
+            this.precomputeQualifiedEmployees();
+          }
+        });
+
+        // Remove employees not present in updated data
+        this.employees = this.employees.filter(emp => {
+          if (!newEmployeeNames.has(emp.name)) {
+            for (let week = 0; week < this.totalWeeks; week++) {
+              for (const assgn of this.assignments) {
+                const posAssignments = this.schedule[week][assgn.id] || [];
+                posAssignments.forEach((name, posIndex) => {
+                  if (name === emp.name) {
+                    this.schedule[week][assgn.id][posIndex] = 'Unassigned';
+                    if (emp.hardAssignments[week] !== undefined) {
+                      delete emp.hardAssignments[week];
+                    }
+                  }
+                });
+              }
+            }
+            this.forbiddenGroups.delete(emp.name);
+            return false;
+          }
+          return true;
+        });
+
+        // Update qualifications for existing employees
+        newEmployees.forEach(newEmp => {
+          const existingEmp = existingEmployeeMap.get(newEmp.name);
+          if (existingEmp) {
+            const oldQuals = new Set(existingEmp.quals.map(q => q.toLowerCase()));
+            const newQuals = new Set(newEmp.quals.map(q => q.toLowerCase()));
+
+            const removedQuals = new Set([...oldQuals].filter(q => !newQuals.has(q)));
+
+            existingEmp.quals = newEmp.quals;
+            existingEmp.isSingleQual = existingEmp.quals.length === 1;
+
+            this.precomputeQualifiedEmployees();
+
+            // Unassign positions if qualifications removed
+            if (removedQuals.size > 0) {
+              for (let w = 0; w < this.totalWeeks; w++) {
+                for (const assgn of this.assignments) {
+                  if (removedQuals.has(assgn.name.toLowerCase())) {
+                    const posAssignments = this.schedule[w][assgn.id] || [];
+                    posAssignments.forEach((name, posIndex) => {
+                      if (name === existingEmp.name) {
+                        this.schedule[w][assgn.id][posIndex] = 'Unassigned';
+                        if (existingEmp.hardAssignments[w] !== undefined) {
+                          delete existingEmp.hardAssignments[w];
+                        }
+                      }
+                    });
+                  }
+                }
+              }
+            }
+
+            // Ensure hardAssignments exists
+            if (!existingEmp.hardAssignments) {
+              existingEmp.hardAssignments = {};
+            }
+          }
+        });
+
+        const existingAssignmentMap = new Map(this.assignments.map(assgn => [assgn.name.toLowerCase(), assgn]));
+        const newAssignmentNames = new Set(newAssignments.map(assgn => assgn.name.toLowerCase()));
+
+        // Add new assignments
+        newAssignments.forEach((assgn, index) => {
+          if (!existingAssignmentMap.has(assgn.name.toLowerCase())) {
+            assgn.id = this.assignments.length > 0 ? Math.max(...this.assignments.map(a => a.id)) + 1 : 0;
+            this.assignments.push(assgn);
+            for (let week = 0; week < this.totalWeeks; week++) {
+              if (!this.schedule[week][assgn.id]) {
+                this.schedule[week][assgn.id] = Array(assgn.positions).fill('-');
+              } else {
+                const currentPositions = this.schedule[week][assgn.id].length;
+                if (assgn.positions > currentPositions) {
+                  this.schedule[week][assgn.id].push(...Array(assgn.positions - currentPositions).fill('-'));
+                } else if (assgn.positions < currentPositions) {
+                  this.schedule[week][assgn.id] = this.schedule[week][assgn.id].slice(0, assgn.positions);
+                }
+              }
+            }
+          }
+        });
+
+        // Remove assignments not present in updated data
+        this.assignments = this.assignments.filter(assgn => {
+          if (!newAssignmentNames.has(assgn.name.toLowerCase())) {
+            for (let week = 0; week < this.totalWeeks; week++) {
+              delete this.schedule[week][assgn.id];
+            }
+            this.forbiddenGroups.forEach((map) => {
+              map.forEach((groups, week) => {
+                groups.delete(assgn.group.toLowerCase());
+                if (groups.size === 0) {
+                  map.delete(week);
+                }
+              });
+            });
+            return false;
+          }
+          return true;
+        });
+
+        // Update existing assignments
+        newAssignments.forEach(newAssgn => {
+          const existingAssgn = existingAssignmentMap.get(newAssgn.name.toLowerCase());
+          if (existingAssgn) {
+            const oldPositions = existingAssgn.positions;
+            const oldGroup = existingAssgn.group;
+            existingAssgn.positions = newAssgn.positions;
+            existingAssgn.group = newAssgn.group || newAssgn.name;
+
+            // Adjust schedule based on new positions
+            if (newAssgn.positions > oldPositions) {
+              for (let week = 0; week < this.totalWeeks; week++) {
+                this.schedule[week][existingAssgn.id].push(...Array(newAssgn.positions - oldPositions).fill('-'));
+              }
+            } else if (newAssgn.positions < oldPositions) {
+              for (let week = 0; week < this.totalWeeks; week++) {
+                this.schedule[week][existingAssgn.id] = this.schedule[week][existingAssgn.id].slice(0, newAssgn.positions);
+              }
+            }
+
+            // Update forbidden groups if group changed
+            if (oldGroup.toLowerCase() !== existingAssgn.group.toLowerCase()) {
+              this.forbiddenGroups.forEach((map) => {
+                for (let week = 0; week < this.totalWeeks; week++) {
+                  const forbidden = map.get(week);
+                  if (forbidden && forbidden.has(oldGroup.toLowerCase())) {
+                    forbidden.delete(oldGroup.toLowerCase());
+                    forbidden.add(existingAssgn.group.toLowerCase());
+                  }
+                }
+              });
+            }
+          }
+        });
+
+        // Unassign employees who no longer qualify
+        this.employees.forEach(emp => {
+          this.assignments.forEach(assgn => {
+            if (!emp.quals.some(q => q.toLowerCase() === assgn.name.toLowerCase())) {
+              for (let week = 0; week < this.totalWeeks; week++) {
+                const posAssignments = this.schedule[week][assgn.id] || [];
+                posAssignments.forEach((name, posIndex) => {
+                  if (name === emp.name) {
+                    this.schedule[week][assgn.id][posIndex] = 'Unassigned';
+                    if (emp.hardAssignments[week] !== undefined) {
+                      delete emp.hardAssignments[week];
+                    }
+                  }
+                });
+              }
+            }
+          });
+        });
+
+        // Ensure all employees have 'hardAssignments'
+        this.employees.forEach(emp => {
+          if (!emp.hardAssignments) {
+            emp.hardAssignments = {};
+          }
+        });
+
+        this.precomputeQualifiedEmployees();
+        this.computeForbiddenGroups();
+      }
+
+      validateInput(employeeInput, assignmentsInput, startDateInput, weeksCount) {
+        if (!employeeInput.trim()) throw new Error('Please enter employee data.');
+        if (!assignmentsInput.trim()) throw new Error('Please enter assignment data.');
+        if (!startDateInput) throw new Error('Please select a start date.');
+        const startDate = new Date(startDateInput);
+        if (isNaN(startDate)) throw new Error('Invalid start date.');
+        if (isNaN(weeksCount) || weeksCount < 1 || weeksCount > 999) throw new Error('Invalid number of weeks.');
+      }
+
+      parseEmployees(employeeInput) {
+        const lines = employeeInput.split('\n').map(l => l.trim()).filter(l => l);
+        this.employees = lines.map(line => {
+          const parts = line.split(',').map(p => p.trim());
+          if (parts.length < 2) throw new Error(`Invalid employee data: ${line}`);
+          const name = parts[0];
+          const quals = parts.slice(1);
+          return {
+            name,
+            quals,
+            isSingleQual: quals.length === 1,
+            count: 0,
+            history: {},
+            assignmentHistory: {},
+            assignmentCountById: {},
+            lastAssignedWeek: -Infinity,
+            lastAssignedJob: {},
+            lastAssignedWeeks: [],
+            unavailableWeeks: [],
+            hardAssignments: {}
+          };
+        });
+      }
+
+      parseEmployeesForUpdate(employeeInput) {
+        const lines = employeeInput.split('\n').map(l => l.trim()).filter(l => l);
+        return lines.map(line => {
+          const parts = line.split(',').map(p => p.trim());
+          if (parts.length < 2) throw new Error(`Invalid employee data: ${line}`);
+          const name = parts[0];
+          const quals = parts.slice(1);
+          return {
+            name,
+            quals,
+            isSingleQual: quals.length === 1
+          };
+        });
+      }
+
+      parseAssignments(assignmentsInput) {
+        const lines = assignmentsInput.split('\n').map(l => l.trim()).filter(l => l);
+        this.assignments = lines.map((line, index) => {
+          const parts = line.split(',').map(p => p.trim());
+          if (parts.length < 2) throw new Error(`Invalid assignment data: ${line}`);
+          const name = parts[0];
+          const positions = parseInt(parts[1], 10);
+          if (isNaN(positions)) throw new Error(`Invalid positions count: ${line}`);
+          const group = parts[2] || parts[0];
+          return { id: index, name, positions, group };
+        });
+      }
+
+      parseAssignmentsForUpdate(assignmentsInput) {
+        const lines = assignmentsInput.split('\n').map(l => l.trim()).filter(l => l);
+        return lines.map((line) => {
+          const parts = line.split(',').map(p => p.trim());
+          if (parts.length < 2) throw new Error(`Invalid assignment data: ${line}`);
+          const name = parts[0];
+          const positions = parseInt(parts[1], 10);
+          if (isNaN(positions)) throw new Error(`Invalid positions count: ${line}`);
+          const group = parts[2] || parts[0];
+          return { name, positions, group };
+        });
+      }
+
+      generateWeekLabels(startDate, weeks) {
+        this.weekLabels = [];
+        const currentDate = new Date(startDate);
+        for (let w = 0; w < weeks; w++) {
+          const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+          const day = String(currentDate.getDate()).padStart(2, '0');
+          const year = currentDate.getFullYear();
+          this.weekLabels.push(`${month}/${day}/${year}`);
+          currentDate.setDate(currentDate.getDate() + 7);
+        }
+      }
+
+      initSchedule() {
+        this.schedule = Array.from({ length: this.totalWeeks }, () => ({}));
+        this.currentPositions = {};
+
+        for (let week = 0; week < this.totalWeeks; week++) {
+          this.currentPositions[week] = {};
+          this.assignments.forEach(assgn => {
+            this.currentPositions[week][assgn.id] = assgn.positions;
+            this.schedule[week][assgn.id] = Array(assgn.positions).fill('-');
+          });
+        }
+
+        this.positionsCutWeeks = new Map();
+        this.employees.forEach(emp => {
+          emp.hardAssignments = {};
+          emp.count = 0;
+          emp.history = {};
+          emp.assignmentHistory = {};
+          emp.assignmentCountById = {};
+          emp.lastAssignedWeek = -Infinity;
+          emp.lastAssignedJob = {};
+          emp.lastAssignedWeeks = [];
+          emp.unavailableWeeks = [];
+        });
+      }
+
+      computeForbiddenGroups() {
+        this.forbiddenGroups = new Map();
+        this.employees.forEach(emp => {
+          this.forbiddenGroups.set(emp.name, new Map());
+        });
+
+        this.employees.forEach(emp => {
+          for (const [weekStr, assignmentId] of Object.entries(emp.hardAssignments)) {
+            const week = parseInt(weekStr, 10);
+            const assgnObj = this.assignments.find(a => a.id === assignmentId);
+            if (!assgnObj) continue;
+            const group = assgnObj.group.toLowerCase();
+
+            if (week - 1 >= 0) {
+              const forbiddenMap = this.forbiddenGroups.get(emp.name);
+              if (!forbiddenMap.has(week - 1)) forbiddenMap.set(week - 1, new Set());
+              forbiddenMap.get(week - 1).add(group);
+            }
+
+            if (week + 1 < this.totalWeeks) {
+              const forbiddenMap = this.forbiddenGroups.get(emp.name);
+              if (!forbiddenMap.has(week + 1)) forbiddenMap.set(week + 1, new Set());
+              forbiddenMap.get(week + 1).add(group);
+            }
+          }
+        });
+      }
+
+      updateForbiddenGroupsOnAssignment(emp, week, group) {
+        const forbiddenMap = this.forbiddenGroups.get(emp.name);
+        if (!forbiddenMap) return;
+        const groupLower = group.toLowerCase();
+        if (week - 1 >= 0) {
+          if (!forbiddenMap.has(week - 1)) forbiddenMap.set(week - 1, new Set());
+          forbiddenMap.get(week - 1).add(groupLower);
+        }
+        if (week + 1 < this.totalWeeks) {
+          if (!forbiddenMap.has(week + 1)) forbiddenMap.set(week + 1, new Set());
+          forbiddenMap.get(week + 1).add(groupLower);
+        }
+      }
+
+      updateForbiddenGroupsOnRemoval(emp, week, group) {
+        const forbiddenMap = this.forbiddenGroups.get(emp.name);
+        if (!forbiddenMap) return;
+        const groupLower = group.toLowerCase();
+        if (week - 1 >= 0 && forbiddenMap.has(week - 1)) {
+          forbiddenMap.get(week - 1).delete(groupLower);
+          if (forbiddenMap.get(week - 1).size === 0) forbiddenMap.delete(week - 1);
+        }
+        if (week + 1 < this.totalWeeks && forbiddenMap.has(week + 1)) {
+          forbiddenMap.get(week + 1).delete(groupLower);
+          if (forbiddenMap.get(week + 1).size === 0) forbiddenMap.delete(week + 1);
+        }
+      }
+
+      pushToUndo() {
+        const snapshot = this.getStateSnapshot();
+        this.undoStack.push(snapshot);
+        if (this.undoStack.length > 20) this.undoStack.shift();
+        this.redoStack = [];
+      }
+
+      undo() {
+        if (this.undoStack.length === 0) return false;
+        const currentState = this.getStateSnapshot();
+        this.redoStack.push(currentState);
+        const previousState = this.undoStack.pop();
+        this.restoreState(previousState);
+        return true;
+      }
+
+      redo() {
+        if (this.redoStack.length === 0) return false;
+        const currentState = this.getStateSnapshot();
+        this.undoStack.push(currentState);
+        const nextState = this.redoStack.pop();
+        this.restoreState(nextState);
+        return true;
+      }
+
+      getStateSnapshot() {
+        return JSON.stringify({
+          employees: this.employees,
+          assignments: this.assignments,
+          schedule: this.schedule,
+          currentPositions: this.currentPositions,
+          weekLabels: this.weekLabels,
+          totalWeeks: this.totalWeeks,
+          currentView: this.currentView,
+          highlightingEnabled: this.highlightingEnabled,
+          multiAssignmentHighlightingEnabled: this.multiAssignmentHighlightingEnabled,
+          maxAssignmentPercentage: this.maxAssignmentPercentage,
+          maxConsecutiveWeeksSingle: this.maxConsecutiveWeeksSingle,
+          maxConsecutiveWeeksMulti: this.maxConsecutiveWeeksMulti,
+          positionsCutWeeks: Array.from(this.positionsCutWeeks.entries()),
+          forbiddenGroups: Array.from(this.forbiddenGroups.entries()).map(([emp, map]) => [emp, Array.from(map.entries()).map(([wk, groups]) => [wk, Array.from(groups)])]),
+          assignmentToQualified: Array.from(this.assignmentToQualified.entries()).map(([assgn, list]) => [assgn, list.map(e => e.name)])
+        });
+      }
+
+      restoreState(snapshotString) {
+        const state = JSON.parse(snapshotString);
+        this.employees = state.employees;
+        this.assignments = state.assignments;
+        this.schedule = state.schedule;
+        this.currentPositions = state.currentPositions;
+        this.weekLabels = state.weekLabels;
+        this.totalWeeks = state.totalWeeks;
+        this.currentView = state.currentView;
+        this.highlightingEnabled = state.highlightingEnabled;
+        this.multiAssignmentHighlightingEnabled = state.multiAssignmentHighlightingEnabled;
+        this.maxAssignmentPercentage = state.maxAssignmentPercentage !== undefined ? state.maxAssignmentPercentage : this.defaultSettings.maxAssignmentPercentage;
+        this.maxConsecutiveWeeksSingle = state.maxConsecutiveWeeksSingle !== undefined ? state.maxConsecutiveWeeksSingle : this.defaultSettings.maxConsecutiveWeeksSingle;
+        this.maxConsecutiveWeeksMulti = state.maxConsecutiveWeeksMulti !== undefined ? state.maxConsecutiveWeeksMulti : this.defaultSettings.maxConsecutiveWeeksMulti;
+        this.positionsCutWeeks = new Map(state.positionsCutWeeks || []);
+
+        this.forbiddenGroups = new Map();
+        if (state.forbiddenGroups && Array.isArray(state.forbiddenGroups)) {
+          state.forbiddenGroups.forEach(([emp, weeks]) => {
+            const map = new Map();
+            weeks.forEach(([wk, groups]) => {
+              map.set(parseInt(wk, 10), new Set(groups));
+            });
+            this.forbiddenGroups.set(emp, map);
+          });
+        } else {
+          this.employees.forEach(emp => {
+            this.forbiddenGroups.set(emp.name, new Map());
+          });
+        }
+
+        this.assignmentToQualified = new Map();
+        if (state.assignmentToQualified && Array.isArray(state.assignmentToQualified)) {
+          state.assignmentToQualified.forEach(([assgn, list]) => {
+            const qualifiedEmployees = this.employees.filter(e => list.includes(e.name));
+            this.assignmentToQualified.set(assgn, qualifiedEmployees);
+          });
+        } else {
+          this.precomputeQualifiedEmployees();
+        }
+
+        // Ensure all employees have 'hardAssignments'
+        this.employees.forEach(emp => {
+          if (!emp.hardAssignments) {
+            emp.hardAssignments = {};
+          }
+        });
+      }
+
+      // Implement toggleCutPosition to handle toggling between Cut and Unassigned
+      toggleCutPosition(week, assignmentId, posIndex) {
+        const currentVal = this.schedule[week][assignmentId][posIndex];
+        if (currentVal === 'Cut') {
+          // If currently cut, revert to Unassigned
+          this.schedule[week][assignmentId][posIndex] = 'Unassigned';
+        } else if (currentVal === '-' || currentVal === 'Unassigned') {
+          // If currently empty or unassigned, mark as Cut
+          this.schedule[week][assignmentId][posIndex] = 'Cut';
+        } else {
+          // If currently assigned to an employee, unassign them first, then cut
+          const emp = this.employees.find(e => e.name === currentVal);
+          const assgn = this.assignments.find(a => a.id === assignmentId);
+          if (emp && assgn) {
+            emp.count = Math.max(emp.count - 1, 0);
+            if (emp.hardAssignments[week] === assignmentId) {
+              delete emp.hardAssignments[week];
+            }
+            if (emp.lastAssignedWeeks.includes(week)) {
+              emp.lastAssignedWeeks = emp.lastAssignedWeeks.filter(wk => wk !== week);
+            }
+            if (emp.lastAssignedJob[assgn.name]) {
+              emp.lastAssignedJob[assgn.name] = emp.lastAssignedJob[assgn.name].filter(wk => wk !== week);
+            }
+            this.updateForbiddenGroupsOnRemoval(emp, week, assgn.group);
+            this.schedule[week][assignmentId][posIndex] = 'Cut';
+          } else {
+            // Unexpected scenario, just revert to Unassigned for safety
+            this.schedule[week][assignmentId][posIndex] = 'Unassigned';
+          }
+        }
+      }
+
+      shuffleArray(array) {
+        for (let i = array.length -1; i >0; i--) {
+          const j = Math.floor(Math.random()*(i+1));
+          [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+      }
+
+      isEmployeeAssignedInWeek(employeeName, week) {
+        for (const assgn of this.assignments) {
+          const assignedEmployees = this.schedule[week][assgn.id] || [];
+          if (assignedEmployees.includes(employeeName)) return true;
+        }
+        return false;
+      }
+
+      isHardAssigned(week, assignmentId, employeeName) {
+        const emp = this.employees.find(e => e.name === employeeName);
+        return emp && emp.hardAssignments[week] === assignmentId;
+      }
+
+      precomputeQualifiedEmployees() {
+        this.assignmentToQualified = new Map();
+        this.assignments.forEach(a => {
+          const assignmentNameLower = a.name.toLowerCase();
+          this.assignmentToQualified.set(a.name, this.employees.filter(e => e.quals.some(q => q.toLowerCase() === assignmentNameLower)));
+        });
+      }
+
+      /**
+       * Modified generateSchedule to accept a parameter to control pushToUndo
+       * @param {boolean} pushUndo - Whether to push the current state to undo stack
+       */
+      generateSchedule(pushUndo = true) {
+        if (pushUndo) this.pushToUndo();
+
+        // Reset forbiddenGroups to clear previous constraints
+        this.computeForbiddenGroups();
+
+        const weeks = this.totalWeeks;
+        const employeesCopy = this.shuffleArray([...this.employees]);
+
+        // Reset assignment-related properties for each employee
+        employeesCopy.forEach(emp => {
+          emp.count = 0;
+          emp.history = {};
+          emp.assignmentHistory = {};
+          emp.assignmentCountById = {};
+          emp.lastAssignedWeek = -Infinity;
+          emp.lastAssignedJob = {};
+          emp.lastAssignedWeeks = [];
+          emp.unavailableWeeks = emp.unavailableWeeks || [];
+          emp.hardAssignments = emp.hardAssignments || {};
+        });
+
+        // Clear non-hard assignments from the schedule
+        for (let week = 0; week < weeks; week++) {
+          this.assignments.forEach(assgn => {
+            for (let p = 0; p < this.schedule[week][assgn.id].length; p++) {
+              const currentVal = this.schedule[week][assgn.id][p];
+              if (currentVal !== 'Cut' && !this.isHardAssigned(week, assgn.id, currentVal)) {
+                this.schedule[week][assgn.id][p] = '-';
+              }
+            }
+          });
+        }
+
+        // Assign hard assignments first to ensure mandatory positions are filled
+        employeesCopy.forEach(emp => {
+          for (const [weekStr, assignmentId] of Object.entries(emp.hardAssignments)) {
+            const week = parseInt(weekStr, 10);
+            const assgnObj = this.assignments.find(a => a.id === assignmentId);
+            if (!assgnObj) continue;
+            if (this.isEmployeeAssignedInWeek(emp.name, week)) continue;
+            if (!this.canAssignEmployeeTo(emp, week, assgnObj)) continue; // Ensure constraints are respected
+            const availablePos = this.schedule[week][assignmentId].findIndex(x => x === '-');
+            if (availablePos !== -1) {
+              this.schedule[week][assignmentId][availablePos] = emp.name;
+              this.updateEmpAssignment(emp, week, assignmentId);
+              this.updateForbiddenGroupsOnAssignment(emp, week, assgnObj.group.toLowerCase()); // Update constraints based on assignment
+            }
+          }
+        });
+
+        // Rebuild assignment histories for all employees
+        this.employees.forEach(emp => {
+          emp.count = 0;
+          emp.history = {};
+          emp.assignmentHistory = {};
+          emp.assignmentCountById = {};
+          emp.lastAssignedWeek = -Infinity;
+          emp.lastAssignedJob = {};
+          emp.lastAssignedWeeks = [];
+          for (let w = 0; w < weeks; w++) {
+            for (const assgn of this.assignments) {
+              const assignedNameList = this.schedule[w][assgn.id] || [];
+              if (assignedNameList.includes(emp.name)) {
+                this.updateEmpAssignment(emp, w, assgn.id);
+                const assgnGroup = assgn.group.toLowerCase();
+                this.updateForbiddenGroupsOnAssignment(emp, w, assgnGroup); // Update constraints based on existing assignments
+              }
+            }
+          }
+        });
+
+        // Assign remaining positions while respecting constraints
+        for (let week = 0; week < weeks; week++) {
+          this.assignments.forEach(assgn => {
+            const requiredPositions = this.currentPositions[week][assgn.id];
+            const assignedCount = this.schedule[week][assgn.id].filter(n => !['Unassigned','-','Cut'].includes(n)).length;
+            const cutCount = this.schedule[week][assgn.id].filter(n => n === 'Cut').length;
+            const toFill = requiredPositions - assignedCount - cutCount;
+
+            for (let i = 0; i < toFill; i++) {
+              // Retrieve precomputed qualified employees
+              let qualified = this.assignmentToQualified.get(assgn.name) || [];
+              
+              // Filter out employees based on availability and constraints
+              qualified = qualified.filter(e => {
+                if (e.unavailableWeeks.includes(week)) return false;
+                if (this.isEmployeeAssignedInWeek(e.name, week)) return false;
+                if (e.hardAssignments[week] !== undefined && e.hardAssignments[week] !== assgn.id) return false;
+                return this.canAssignEmployeeTo(e, week, assgn);
+              });
+
+              // Further filter based on forbidden groups for the week
+              qualified = qualified.filter(e => {
+                const forbiddenMap = this.forbiddenGroups.get(e.name);
+                if (forbiddenMap && forbiddenMap.has(week)) {
+                  const forbidden = forbiddenMap.get(week);
+                  return !forbidden.has(assgn.group.toLowerCase());
+                }
+                return true;
+              });
+
+              if (qualified.length === 0) {
+                const posIndex = this.schedule[week][assgn.id].indexOf('-');
+                if (posIndex !== -1) {
+                  this.schedule[week][assgn.id][posIndex] = 'Unassigned';
+                }
+                continue;
+              }
+
+              // Shuffle and sort qualified employees to balance assignments
+              this.shuffleArray(qualified);
+              qualified.sort((a, b) => {
+                let diff = a.count - b.count;
+                if (diff !== 0) return diff;
+                let aLast = a.assignmentHistory[assgn.id] ?? -Infinity;
+                let bLast = b.assignmentHistory[assgn.id] ?? -Infinity;
+                return aLast - bLast;
+              });
+
+              const chosen = qualified[0];
+              const posIndex = this.findAvailablePosition(week, assgn.id);
+              if (posIndex !== -1) {
+                this.schedule[week][assgn.id][posIndex] = chosen.name;
+                this.updateEmpAssignment(chosen, week, assgn.id);
+                this.updateForbiddenGroupsOnAssignment(chosen, week, assgn.group.toLowerCase()); // Update constraints based on assignment
+              }
+            }
+          });
+        }
+      }
+
+      canAssignEmployeeTo(emp, week, assgn) {
+        // Check if employee is unavailable
+        if (emp.unavailableWeeks.includes(week)) return false;
+
+        // Check forbidden groups for the week
+        const forbiddenMap = this.forbiddenGroups.get(emp.name);
+        if (forbiddenMap && forbiddenMap.has(week)) {
+          const forbidden = forbiddenMap.get(week);
+          if (forbidden.has(assgn.group.toLowerCase())) {
+            return false;
+          }
+        }
+
+        // Prevent assigning more than maxConsecutiveWeeks
+        const recentWeeks = emp.lastAssignedWeeks.filter(wk => wk < week && wk >= week - this.maxConsecutiveWeeksMulti);
+        if (emp.isSingleQual) {
+          if (recentWeeks.length >= this.maxConsecutiveWeeksSingle) return false;
+        } else {
+          if (recentWeeks.length >= this.maxConsecutiveWeeksMulti) return false;
+        }
+
+        // Enforce group-specific constraints
+        if (!emp.isSingleQual) {
+          if (emp.history[assgn.group.toLowerCase()] === week - 1) return false;
+        } else {
+          // Single-qualified employees cannot work more than maxConsecutiveWeeksSingle
+          if (recentWeeks.length >= this.maxConsecutiveWeeksSingle) return false;
+        }
+
+        // Check recent assignment history within the last 3 weeks
+        const history = emp.lastAssignedJob[assgn.name.toLowerCase()] || [];
+        const recent = history.filter(wk => week - wk < 3);
+
+        if (emp.isSingleQual) {
+          // Allow up to (maxConsecutiveWeeksSingle) assignments in the last (maxConsecutiveWeeksSingle + 1) weeks
+          if (recent.length >= this.maxConsecutiveWeeksSingle + 1) return false;
+        } else {
+          // Allow up to (maxConsecutiveWeeksMulti - 1) assignments in the last (maxConsecutiveWeeksMulti + 1) weeks
+          if (recent.length >= this.maxConsecutiveWeeksMulti) return false;
+        }
+
+        return true;
+      }
+
+      findAvailablePosition(week, assignmentId) {
+        let posIndex = this.schedule[week][assignmentId].indexOf('-');
+        if (posIndex === -1) {
+          posIndex = this.schedule[week][assignmentId].indexOf('Unassigned');
+        }
+        return posIndex;
+      }
+
+      updateEmpAssignment(emp, week, assignmentId) {
+        const assgn = this.assignments.find(a => a.id === assignmentId);
+        emp.count++;
+        emp.assignmentHistory[assignmentId] = week;
+        if (!emp.assignmentCountById[assignmentId]) emp.assignmentCountById[assignmentId] = 0;
+        emp.assignmentCountById[assignmentId]++;
+        if (!emp.isSingleQual) {
+          emp.history[assgn.group.toLowerCase()] = week;
+        } else {
+          emp.lastAssignedWeek = week;
+        }
+        // Maintain a history of the last few assignments
+        if (!emp.lastAssignedJob[assgn.name.toLowerCase()]) emp.lastAssignedJob[assgn.name.toLowerCase()] = [];
+        emp.lastAssignedJob[assgn.name.toLowerCase()].push(week);
+        if (emp.lastAssignedJob[assgn.name.toLowerCase()].length > 4) {
+          emp.lastAssignedJob[assgn.name.toLowerCase()].shift();
+        }
+        emp.lastAssignedWeeks.push(week);
+        if (emp.lastAssignedWeeks.length > this.maxConsecutiveWeeksMulti) emp.lastAssignedWeeks.shift();
+      }
+
+      toggleView() {
+        this.currentView = this.currentView === 'assignment' ? 'employee' : 'assignment';
+      }
+
+      toggleHighlighting() {
+        this.highlightingEnabled = !this.highlightingEnabled;
+      }
+
+      toggleMultiAssignmentHighlighting() {
+        this.multiAssignmentHighlightingEnabled = !this.multiAssignmentHighlightingEnabled;
+      }
+
+      assignEmployeeManually(empName, week, assignmentId) {
+        const assgn = this.assignments.find(a => a.id === assignmentId);
+        const emp = this.employees.find(e => e.name === empName);
+        if (!assgn || !emp) return;
+
+        // Remove any existing assignments for the employee in the specified week
+        this.removeEmployeeFromWeek(emp.name, week);
+
+        if (emp.unavailableWeeks.includes(week)) return;
+
+        let posIndex = this.findAvailablePosition(week, assignmentId);
+        if (posIndex === -1) {
+          const assignedEmployees = this.schedule[week][assignmentId].filter(x => !['Unassigned','-','Cut'].includes(x));
+          if (assignedEmployees.length > 0) {
+            const candidates = assignedEmployees.map(eName => this.employees.find(emp => emp.name === eName));
+            candidates.sort((a, b) => {
+              let diff = b.count - a.count;
+              if (diff !== 0) return diff;
+              let aCount = a.assignmentCountById[assignmentId] || 0;
+              let bCount = b.assignmentCountById[assignmentId] || 0;
+              diff = bCount - aCount;
+              if (diff !== 0) return diff;
+              return Math.random() - 0.5;
+            });
+            const removeEmp = candidates[0];
+            const posToRemove = this.schedule[week][assignmentId].indexOf(removeEmp.name);
+            if (posToRemove !== -1) {
+              this.clearAssignmentManually(week, assignmentId, posToRemove);
+              posIndex = posToRemove;
+            }
+          }
+        }
+
+        if (posIndex !== -1) {
+          this.schedule[week][assignmentId][posIndex] = emp.name;
+          emp.hardAssignments[week] = assignmentId; 
+          this.updateEmpAssignment(emp, week, assignmentId);
+          this.updateForbiddenGroupsOnAssignment(emp, week, assgn.group.toLowerCase());
+        }
+      }
+
+      removeEmployeeFromWeek(empName, week) {
+        for (const assgn of this.assignments) {
+          const posAssignments = this.schedule[week][assgn.id] || [];
+          const posIndex = posAssignments.indexOf(empName);
+          if (posIndex !== -1) {
+            this.clearAssignmentManually(week, assgn.id, posIndex);
+          }
+        }
+      }
+
+      clearAssignmentManually(week, assignmentId, positionIndex) {
+        const currentVal = this.schedule[week][assignmentId][positionIndex];
+        if (!['-', 'Unassigned', 'Cut'].includes(currentVal)) {
+          const emp = this.employees.find(e => e.name === currentVal);
+          if (emp) {
+            emp.count--;
+            if (emp.assignmentHistory[assignmentId] !== undefined) {
+              delete emp.assignmentHistory[assignmentId];
+            }
+            const assgnName = this.assignments.find(a => a.id === assignmentId).name.toLowerCase();
+            delete emp.lastAssignedJob[assgnName];
+            emp.lastAssignedWeeks = emp.lastAssignedWeeks.filter(wk => wk !== week);
+            delete emp.hardAssignments[week];
+            if (emp.assignmentCountById[assignmentId]) {
+              emp.assignmentCountById[assignmentId] = Math.max(emp.assignmentCountById[assignmentId] - 1, 0);
+            }
+            const assgnGroup = this.assignments.find(a => a.id === assignmentId).group.toLowerCase();
+            this.updateForbiddenGroupsOnRemoval(emp, week, assgnGroup);
+          }
+        }
+        this.schedule[week][assignmentId][positionIndex] = 'Unassigned';
+      }
+
+      // Toggle availability manually, ensuring 'hardAssignments' remains intact
+      toggleAvailabilityManually(empName, week) {
+        const emp = this.employees.find(e => e.name === empName);
+        if (!emp) return;
+
+        const index = emp.unavailableWeeks.indexOf(week);
+        if (index === -1) {
+          emp.unavailableWeeks.push(week);
+          this.assignments.forEach(assgn => {
+            this.schedule[week][assgn.id] = this.schedule[week][assgn.id].map(name => (name === emp.name ? 'Unassigned' : name));
+          });
+          if (emp.hardAssignments[week] !== undefined) {
+            const assgnGroup = this.assignments.find(a => a.id === emp.hardAssignments[week]).group.toLowerCase();
+            this.updateForbiddenGroupsOnRemoval(emp, week, assgnGroup);
+            delete emp.hardAssignments[week];
+          }
+        } else {
+          emp.unavailableWeeks.splice(index, 1);
+          // Optionally, reassign the employee to available positions
+          // This requires additional logic to assign 'Unassigned' positions to the now available employee
+          // For simplicity, we'll leave it to the user to manually regenerate the schedule if desired
+        }
+      }
+
+      applyMaxPercentageTrimming() {
+        const totalWeeks = this.totalWeeks;
+        const maxPercentage = this.maxAssignmentPercentage || 1.0;
+        const maxAllowedWeeks = Math.floor(totalWeeks * maxPercentage);
+
+        const employeeAssignments = new Map();
+        for (const emp of this.employees) {
+          employeeAssignments.set(emp.name, {});
+        }
+
+        for (let w = 0; w < totalWeeks; w++) {
+          for (const assgn of this.assignments) {
+            const assigned = this.schedule[w][assgn.id] || [];
+            assigned.forEach((val, posIndex) => {
+              if (val !== '-' && val !== 'Unassigned' && val !== 'Cut') {
+                const empName = val;
+                if (!employeeAssignments.get(empName)[w]) {
+                  employeeAssignments.get(empName)[w] = [];
+                }
+                employeeAssignments.get(empName)[w].push({ assignmentId: assgn.id, posIndex });
+              }
+            });
+          }
+        }
+
+        for (const emp of this.employees) {
+          const empName = emp.name;
+          const weeksAssigned = Object.keys(employeeAssignments.get(empName)).length;
+
+          if (weeksAssigned > maxAllowedWeeks) {
+            const excess = weeksAssigned - maxAllowedWeeks;
+            let weeksArray = Object.keys(employeeAssignments.get(empName)).map(w => parseInt(w, 10));
+
+            // Shuffle the weeks to randomize which weeks to trim
+            this.shuffleArray(weeksArray);
+
+            let removedCount = 0;
+            for (const week of weeksArray) {
+              if (removedCount >= excess) break;
+              const assignmentsForWeek = employeeAssignments.get(empName)[week];
+
+              if (assignmentsForWeek.length > 0) {
+                // Remove one assignment per week to spread out the unassignments
+                const slot = assignmentsForWeek.pop();
+                if (emp.hardAssignments[week] !== slot.assignmentId) { // Ensure not to remove hard assignments
+                  this.schedule[week][slot.assignmentId][slot.posIndex] = 'Unassigned';
+                  removedCount++;
+
+                  const assgn = this.assignments.find(a => a.id === slot.assignmentId);
+                  if (assgn) {
+                    emp.count = Math.max(emp.count - 1, 0);
+                    if (emp.assignmentCountById[slot.assignmentId]) {
+                      emp.assignmentCountById[slot.assignmentId] = Math.max(emp.assignmentCountById[slot.assignmentId] - 1, 0);
+                    }
+                    this.updateForbiddenGroupsOnRemoval(emp, week, assgn.group.toLowerCase());
+                  }
+
+                  if (assignmentsForWeek.length === 0) {
+                    delete employeeAssignments.get(empName)[week];
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+
+      computeWeekStaffingRatio(week) {
+        let filledPositions = 0;
+        let totalRequiredPositions = 0;
+        for (const assgn of this.assignments) {
+          const assigned = this.schedule[week][assgn.id] || [];
+          const requiredPositions = this.currentPositions[week][assgn.id];
+          const assignedCount = assigned.filter(name => !['Unassigned','-','Cut'].includes(name)).length;
+          filledPositions += assignedCount;
+          totalRequiredPositions += requiredPositions;
+        }
+        return totalRequiredPositions > 0 ? (filledPositions / totalRequiredPositions) : 0;
+      }
+
+      // Removed as it's already implemented above
+    }
+
+    // UIManager Class: Handles all UI rendering and interactions
+    class UIManager {
+      constructor(model, saveStateCallback) { // Accepts a callback to save state
+        this.model = model;
+        this.saveStateCallback = saveStateCallback; // Stores the callback for later use
+        this.employeeDataEl = document.getElementById('employeeData');
+        this.assignmentsDataEl = document.getElementById('assignmentsData');
+        this.startDateEl = document.getElementById('startDate');
+        this.weeksEl = document.getElementById('weeks');
+        this.initializeBtn = document.getElementById('initializeScheduleBtn');
+        this.updateDataBtn = document.getElementById('updateDataBtn'); // Button to update data
+        this.generateBtn = document.getElementById('generateScheduleBtn');
+        this.toggleViewBtn = document.getElementById('toggleViewBtn');
+        this.exportCSVBtn = document.getElementById('exportCSVBtn');
+        this.settingsBtn = document.getElementById('settingsBtn'); // Renamed from resetScheduleBtn
+        this.undoBtn = document.getElementById('undoBtn');
+        this.redoBtn = document.getElementById('redoBtn');
+        // Removed references to original buttons
+        this.assignmentTable = document.getElementById('assignmentTable');
+        this.employeeTable = document.getElementById('employeeTable');
+        this.conflictsSection = document.getElementById('conflictsSection');
+        this.conflictsList = document.getElementById('conflictsList');
+        this.notificationEl = document.getElementById('notification');
+        this.viewTypeEl = document.getElementById('viewType');
+        this.iterationCountEl = document.getElementById('iterationCount');
+        this.runIterationsBtn = document.getElementById('runIterationsBtn');
+
+        // New Elements for Log
+        this.toggleLogBtn = document.getElementById('toggleLogBtn');
+        this.notificationLogList = document.getElementById('notificationLogList');
+        this.notificationLogDiv = document.getElementById('notificationLog');
+
+        // Modal Elements
+        this.settingsModal = document.getElementById('settingsModal');
+        this.closeSettingsBtn = this.settingsModal.querySelector('.close-button');
+        this.saveSettingsBtn = document.getElementById('saveSettingsBtn');
+        this.restoreDefaultsBtn = document.getElementById('restoreDefaultsBtn');
+        this.maxAssignmentPercentageInput = document.getElementById('maxAssignmentPercentageInput');
+        this.identicalWeeksToggle = document.getElementById('identicalWeeksToggle');
+        this.consecutiveWeeksToggle = document.getElementById('consecutiveWeeksToggle');
+        this.maxConsecutiveWeeksSingle = document.getElementById('maxConsecutiveWeeksSingle');
+        this.maxConsecutiveWeeksMulti = document.getElementById('maxConsecutiveWeeksMulti');
+
+        // New Cancel Iterations Button
+        this.cancelIterationsBtn = document.getElementById('cancelIterationsBtn');
+
+        this.selectedCell = null; // Tracks the currently selected cell
+
+        // Bind the toggle log functionality
+        this.toggleLogBtn.addEventListener('click', () => {
+          if (this.notificationLogDiv.style.display === 'none' || this.notificationLogDiv.style.display === '') {
+            this.notificationLogDiv.style.display = 'block';
+            this.toggleLogBtn.textContent = 'Hide Log';
+          } else {
+            this.notificationLogDiv.style.display = 'none';
+            this.toggleLogBtn.textContent = 'Show Log';
+          }
+        });
+
+        // Bind the settings modal open/close
+        this.settingsBtn.addEventListener('click', () => {
+          this.showSettingsModal();
+        });
+
+        this.closeSettingsBtn.addEventListener('click', () => {
+          this.hideSettingsModal();
+        });
+
+        // Bind the Restore Defaults button
+        this.restoreDefaultsBtn.addEventListener('click', () => {
+          this.restoreDefaultSettings();
+        });
+
+        this.saveSettingsBtn.addEventListener('click', () => {
+          const identicalWeeksState = this.identicalWeeksToggle.checked;
+          const consecutiveWeeksState = this.consecutiveWeeksToggle.checked;
+          
+          // Validate percentage
+          const percentage = parseInt(this.maxAssignmentPercentageInput.value, 10);
+          if (isNaN(percentage) || percentage < 0 || percentage > 100) {
+            alert('Please enter a valid percentage between 0 and 100.');
+            return;
+          }
+
+          // Validate max consecutive weeks
+          const maxConsecSingle = parseInt(this.maxConsecutiveWeeksSingle.value, 10);
+          const maxConsecMulti = parseInt(this.maxConsecutiveWeeksMulti.value, 10);
+          if (isNaN(maxConsecSingle) || maxConsecSingle < 1) {
+            alert('Please enter a valid number of consecutive weeks for Single-Qualified Employees (minimum 1).');
+            return;
+          }
+          if (isNaN(maxConsecMulti) || maxConsecMulti < 1) {
+            alert('Please enter a valid number of consecutive weeks for Multi-Qualified Employees (minimum 1).');
+            return;
+          }
+
+          // Save settings to model
+          this.model.pushToUndo(); // Save state before change
+          this.model.maxAssignmentPercentage = percentage / 100;
+          this.model.highlightingEnabled = identicalWeeksState;
+          this.model.multiAssignmentHighlightingEnabled = consecutiveWeeksState;
+          this.model.maxConsecutiveWeeksSingle = maxConsecSingle;
+          this.model.maxConsecutiveWeeksMulti = maxConsecMulti;
+          this.model.applyMaxPercentageTrimming();
+          this.model.computeForbiddenGroups(); // Recompute constraints after trimming
+
+          this.saveStateCallback(); // Save to localStorage
+          this.hideSettingsModal();
+
+          // Prepare notification messages
+          const messages = [
+            `Max Assignment Percentage set to ${percentage}%. Schedule trimmed accordingly.`,
+            `Identical Weeks ${identicalWeeksState ? 'enabled' : 'disabled'}.`,
+            `Consecutive Weeks ${consecutiveWeeksState ? 'enabled' : 'disabled'}.`,
+            `Max Consecutive Weeks for Single-Qualified Employees set to ${maxConsecSingle}.`,
+            `Max Consecutive Weeks for Multi-Qualified Employees set to ${maxConsecMulti}.`
+          ];
+
+          // Display notification
+          this.showNotification(messages.join(' '), true);
+
+          this.renderAll();
+        });
+
+        // Bind the Restore Defaults button within settings
+        this.restoreDefaultsBtn.addEventListener('click', () => {
+          this.restoreDefaultSettings();
+        });
+
+        // Bind the Cancel Iterations button
+        this.cancelIterationsBtn.addEventListener('click', () => {
+          if (this.onCancelIterations) {
+            this.onCancelIterations();
+          }
+        });
+      }
+
+      /**
+       * Restores all settings to their default values.
+       */
+      restoreDefaultSettings() {
+        if (confirm('Are you sure you want to restore all settings to their default values? This will regenerate the schedule accordingly.')) {
+          this.model.pushToUndo(); // Save state before restoring defaults
+
+          // Restore default settings
+          this.model.maxAssignmentPercentage = this.model.defaultSettings.maxAssignmentPercentage;
+          this.model.highlightingEnabled = this.model.defaultSettings.highlightingEnabled;
+          this.model.multiAssignmentHighlightingEnabled = this.model.defaultSettings.multiAssignmentHighlightingEnabled;
+          this.model.maxConsecutiveWeeksSingle = this.model.defaultSettings.maxConsecutiveWeeksSingle;
+          this.model.maxConsecutiveWeeksMulti = this.model.defaultSettings.maxConsecutiveWeeksMulti;
+
+          // Update UI inputs to reflect defaults
+          this.maxAssignmentPercentageInput.value = (this.model.maxAssignmentPercentage * 100).toString();
+          this.identicalWeeksToggle.checked = this.model.highlightingEnabled;
+          this.consecutiveWeeksToggle.checked = this.model.multiAssignmentHighlightingEnabled;
+          this.maxConsecutiveWeeksSingle.value = this.model.maxConsecutiveWeeksSingle;
+          this.maxConsecutiveWeeksMulti.value = this.model.maxConsecutiveWeeksMulti;
+
+          // Apply settings to the schedule
+          this.model.applyMaxPercentageTrimming();
+          this.model.computeForbiddenGroups();
+
+          this.saveStateCallback(); // Save to localStorage
+          this.hideSettingsModal();
+
+          // Display notification
+          this.showNotification('All settings have been restored to their default values. Schedule regenerated accordingly.', true);
+
+          this.renderAll();
+        }
+      }
+
+      /**
+       * Displays a notification to the user.
+       * @param {string} message - The message to display.
+       * @param {boolean} autoHide - Whether the notification should auto-hide after 10 seconds.
+       */
+      showNotification(message, autoHide = true) {
+        this.notificationEl.textContent = message;
+        this.notificationEl.classList.add('show');
+        if (autoHide) {
+          setTimeout(() => {
+            this.notificationEl.classList.remove('show');
+          }, 10000); // Notification disappears after 10 seconds
+        }
+
+        // Append to log only if message does NOT contain 'Iteration'
+        if (!message.includes('Iteration') && !message.includes('Running iterations')) {
+          const li = document.createElement('li');
+          const timestamp = new Date().toLocaleString();
+          li.textContent = `[${timestamp}] ${message}`;
+          this.notificationLogList.appendChild(li);
+
+          // Scroll to the bottom of the log
+          this.notificationLogList.scrollTop = this.notificationLogList.scrollHeight;
+        }
+      }
+
+      // Opens the settings modal
+      showSettingsModal() {
+        // Set toggle states based on the model or defaults
+        this.identicalWeeksToggle.checked = this.model.highlightingEnabled || false;
+        this.consecutiveWeeksToggle.checked = this.model.multiAssignmentHighlightingEnabled !== undefined ? this.model.multiAssignmentHighlightingEnabled : true;
+        
+        // Set the max assignment percentage input
+        this.maxAssignmentPercentageInput.value = (this.model.maxAssignmentPercentage * 100).toString();
+        
+        // Set the max consecutive weeks inputs
+        this.maxConsecutiveWeeksSingle.value = this.model.maxConsecutiveWeeksSingle;
+        this.maxConsecutiveWeeksMulti.value = this.model.maxConsecutiveWeeksMulti;
+
+        this.settingsModal.style.display = 'block';
+      }
+
+      // Closes the settings modal
+      hideSettingsModal() {
+        this.settingsModal.style.display = 'none';
+      }
+
+      // Updates the state of Undo and Redo buttons
+      updateUndoRedoButtons() {
+        this.undoBtn.disabled = (this.model.undoStack.length === 0);
+        this.redoBtn.disabled = (this.model.redoStack.length === 0);
+      }
+
+      // Renders the entire UI based on the current model state
+      renderAll() {
+        if (this.model.schedule.length > 0) {
+          this.toggleViewBtn.style.display = 'inline-block';
+          this.exportCSVBtn.style.display = 'inline-block';
+          this.generateBtn.disabled = false;
+          // Removed display of original buttons
+          this.iterationControlsDisplay(true);
+        } else {
+          this.toggleViewBtn.style.display = 'none';
+          this.exportCSVBtn.style.display = 'none';
+          this.generateBtn.disabled = true;
+          this.iterationControlsDisplay(false);
+        }
+
+        if (this.model.currentView === 'assignment') {
+          this.assignmentTable.style.display = 'table';
+          this.employeeTable.style.display = 'none';
+          this.toggleViewBtn.textContent = 'Switch to Employee View';
+          this.conflictsSection.style.display = 'none';
+          this.viewTypeEl.textContent = 'Assignments';
+          this.renderAssignmentView();
+        } else {
+          this.assignmentTable.style.display = 'none';
+          this.employeeTable.style.display = 'table';
+          this.toggleViewBtn.textContent = 'Switch to Assignment View';
+          this.viewTypeEl.textContent = 'Employees';
+          this.renderEmployeeView();
+          this.renderConflicts();
+        }
+
+        this.updateUndoRedoButtons();
+      }
+
+      // Shows or hides the iteration controls based on the parameter
+      iterationControlsDisplay(show) {
+        const iterationControls = document.querySelector('.help-bar .iteration-controls');
+        if (iterationControls) {
+          iterationControls.style.display = show ? 'flex' : 'none';
+        }
+      }
+
+      // Retrieves staffing status for a specific week
+      getWeekStaffingStatus(week) {
+        const { assignments, schedule, currentPositions } = this.model;
+        let unassigned = false;
+        let overstaffed = false;
+
+        assignments.forEach(assgn => {
+          const requiredPositions = currentPositions[week][assgn.id];
+          const assignedCount = schedule[week][assgn.id].filter(name => !['Unassigned','-','Cut'].includes(name)).length;
+          const cutCount = schedule[week][assgn.id].filter(name => name === 'Cut').length;
+          const unassignedCount = requiredPositions - assignedCount - cutCount;
+          const overstaffedCount = schedule[week][assgn.id].length - requiredPositions - cutCount;
+          if (unassignedCount > 0) {
+            unassigned = true;
+          }
+          if (overstaffedCount > 0) {
+            overstaffed = true;
+          }
+        });
+
+        return { unassigned, overstaffed };
+      }
+
+      // Renders the Assignment View table
+      renderAssignmentView() {
+        const { assignments, schedule, weekLabels, totalWeeks } = this.model;
+        this.assignmentTable.innerHTML = '';
+
+        const thead = document.createElement('thead');
+        const headerRow = document.createElement('tr');
+        const assignmentHeader = document.createElement('th');
+        assignmentHeader.textContent = 'Assignment / Group';
+        headerRow.appendChild(assignmentHeader);
+        weekLabels.forEach((w, i) => {
+          const th = document.createElement('th');
+          th.textContent = w;
+          const { unassigned, overstaffed } = this.getWeekStaffingStatus(i);
+          if (unassigned || overstaffed) {
+            th.classList.add('highlight-header-footer');
+          }
+          headerRow.appendChild(th);
+        });
+        thead.appendChild(headerRow);
+        this.assignmentTable.appendChild(thead);
+
+        const tbody = document.createElement('tbody');
+
+        assignments.forEach(assgn => {
+          const maxPositions = assgn.positions;
+          for (let p = 0; p < maxPositions; p++) {
+            const row = document.createElement('tr');
+            if (p === 0) {
+              const assignmentCell = document.createElement('td');
+              assignmentCell.textContent = `${assgn.name} (${assgn.group})`;
+              assignmentCell.rowSpan = maxPositions;
+              assignmentCell.classList.add('assignment-name-cell');
+              row.appendChild(assignmentCell);
+            }
+
+            for (let week = 0; week < totalWeeks; week++) {
+              const cell = document.createElement('td');
+              cell.dataset.assignmentId = assgn.id;
+              cell.dataset.week = week;
+              cell.dataset.positionIndex = p;
+
+              const posAssignments = schedule[week][assgn.id] || [];
+              const val = posAssignments[p] !== undefined ? posAssignments[p] : '-';
+
+              if (val === 'Cut') {
+                cell.textContent = 'Cut';
+                cell.classList.add('cut-position');
+              } else if (val === '-' || val === 'Unassigned') {
+                cell.textContent = (val === 'Unassigned') ? 'Unassigned' : '-';
+                cell.classList.add('warning');
+              } else {
+                cell.textContent = val;
+                const emp = this.model.employees.find(e => e.name === val);
+                if (emp && emp.hardAssignments[week] === assgn.id) {
+                  cell.classList.add('hard-assigned');
+                }
+              }
+
+              // Event Listener for Clicks on Cells
+              cell.addEventListener('click', (event) => {
+                this.selectedCell = cell;
+                if (event.ctrlKey) {
+                  this.model.pushToUndo();
+                  this.model.toggleCutPosition(week, assgn.id, p); // Now properly defined
+                  this.model.computeForbiddenGroups(); // Recompute constraints after toggling
+                  this.saveStateCallback(); // Save to localStorage
+                  this.renderAll();
+                  this.showNotification(`Toggled cut for "${assgn.name}" in Week ${week + 1}.`, true);
+                }
+              });
+              row.appendChild(cell);
+            }
+            tbody.appendChild(row);
+          }
+        });
+
+        this.assignmentTable.appendChild(tbody);
+
+        // Footer Row Highlighting Week Numbers
+        const tfoot = document.createElement('tfoot');
+        const footerRow = document.createElement('tr');
+        const labelCell = document.createElement('td');
+        labelCell.textContent = 'Week';
+        footerRow.appendChild(labelCell);
+        this.model.weekLabels.forEach((w, i) => {
+          const weekCell = document.createElement('td');
+          weekCell.textContent = `W${i+1}`;
+          const { unassigned, overstaffed } = this.getWeekStaffingStatus(i);
+          if (unassigned || overstaffed) {
+            weekCell.classList.add('highlight-header-footer');
+          }
+          footerRow.appendChild(weekCell);
+        });
+        // Removed the extra empty footer cell to fix the extra "Week" column
+        tfoot.appendChild(footerRow);
+        this.assignmentTable.appendChild(tfoot);
+      }
+
+      // Renders the Employee View table
+      renderEmployeeView() {
+        const { employees, assignments, schedule, totalWeeks, weekLabels } = this.model;
+        this.employeeTable.innerHTML = '';
+
+        const thead = document.createElement('thead');
+        const headerRow = document.createElement('tr');
+        const empHeader = document.createElement('th');
+        empHeader.textContent = 'Employee';
+        headerRow.appendChild(empHeader);
+        weekLabels.forEach((w, i) => {
+          const th = document.createElement('th');
+          th.textContent = w;
+          const { unassigned, overstaffed } = this.getWeekStaffingStatus(i);
+          if (unassigned || overstaffed) {
+            th.classList.add('highlight-header-footer');
+          }
+          headerRow.appendChild(th);
+        });
+        const totalHeader = document.createElement('th');
+        totalHeader.textContent = 'Total';
+        headerRow.appendChild(totalHeader);
+        thead.appendChild(headerRow);
+        this.employeeTable.appendChild(thead);
+
+        const tbody = document.createElement('tbody');
+
+        employees.forEach((emp, empIndex) => {
+          const row = document.createElement('tr');
+          const empCell = document.createElement('td');
+          empCell.textContent = emp.name;
+          row.appendChild(empCell);
+
+          let totalAssignments = 0;
+
+          for (let week = 0; week < totalWeeks; week++) {
+            const cell = document.createElement('td');
+            cell.dataset.empIndex = empIndex;
+            cell.dataset.week = week;
+
+            const assignedAssignments = this.getEmployeeAssignmentsInWeek(emp.name, week, assignments, schedule);
+            if (emp.unavailableWeeks.includes(week)) {
+              cell.textContent = 'Unavailable';
+              cell.classList.add('unavailable');
+              cell.addEventListener('click', (event) => {
+                this.selectedCell = cell;
+                if (event.ctrlKey) {
+                  this.model.pushToUndo();
+                  this.model.toggleAvailabilityManually(emp.name, week);
+                  this.model.computeForbiddenGroups(); // Recompute constraints after toggling
+                  this.saveStateCallback(); // Save to localStorage
+
+                  this.renderAll();
+                  this.showNotification(`${emp.name} is now ${this.model.employees[empIndex].unavailableWeeks.includes(week) ? 'Unavailable' : 'Available'} for Week ${week + 1}.`, true);
+                } else {
+                  // Regular click: show the dropdown with assignments, "None", and "Unavailable"
+                  if (cell.querySelector('select')) return; // Prevent multiple selects
+                  const currentVal = assignedAssignments.length > 0 ? assignedAssignments[0].id : '';
+
+                  const select = document.createElement('select');
+                  select.classList.add('assignment-select');
+                  select.innerHTML = '<option value="">-- Select --</option>';
+
+                  assignments.forEach(a => {
+                    const option = document.createElement('option');
+                    option.value = a.id;
+                    option.textContent = a.name;
+                    select.appendChild(option);
+                  });
+
+                  // "None" option to clear assignment and make employee available
+                  const clearOption = document.createElement('option');
+                  clearOption.value = 'clear';
+                  clearOption.textContent = 'None (-)';
+                  select.appendChild(clearOption);
+
+                  // "Unavailable" option to mark employee as unavailable
+                  const unavailableOption = document.createElement('option');
+                  unavailableOption.value = 'unavailable';
+                  unavailableOption.textContent = 'Unavailable';
+                  select.appendChild(unavailableOption);
+
+                  // Set the current value
+                  if (emp.unavailableWeeks.includes(week)) {
+                    select.value = 'unavailable';
+                  } else if (currentVal !== '') {
+                    select.value = currentVal;
+                  } else {
+                    select.value = '';
+                  }
+
+                  cell.textContent = '';
+                  cell.appendChild(select);
+                  select.focus();
+
+                  // Handle changes in the select dropdown
+                  select.addEventListener('change', (e) => this.handleEmployeeCellChange(e, empIndex, week));
+                  select.addEventListener('blur', () => {
+                    this.renderAll();
+                  }, {once:true});
+                }
+              });
+            } else {
+              if (assignedAssignments.length > 0) {
+                cell.textContent = assignedAssignments.map(a => a.name).join(', ');
+                totalAssignments += assignedAssignments.length;
+                const isHardAssigned = assignedAssignments.some(a => this.model.employees[empIndex].hardAssignments[week] === a.id);
+                if (isHardAssigned) cell.classList.add('hard-assigned');
+              } else {
+                cell.textContent = '-';
+              }
+
+              // Event Listener for Clicks on Cells
+              cell.addEventListener('click', (event) => {
+                this.selectedCell = cell;
+                if (event.ctrlKey) {
+                  // CTRL + click toggles availability
+                  this.model.pushToUndo();
+                  this.model.toggleAvailabilityManually(emp.name, week);
+                  this.model.computeForbiddenGroups();
+                  this.saveStateCallback();
+
+                  this.renderAll();
+                  this.showNotification(`${emp.name} is now ${this.model.employees[empIndex].unavailableWeeks.includes(week) ? 'Unavailable' : 'Available'} for Week ${week + 1}.`, true);
+                } else {
+                  // Regular click: show the dropdown with assignments, "None", and "Unavailable"
+                  if (cell.querySelector('select')) return; // Prevent multiple selects
+                  const currentVal = assignedAssignments.length > 0 ? assignedAssignments[0].id : '';
+
+                  const select = document.createElement('select');
+                  select.classList.add('assignment-select');
+                  select.innerHTML = '<option value="">-- Select --</option>';
+
+                  assignments.forEach(a => {
+                    const option = document.createElement('option');
+                    option.value = a.id;
+                    option.textContent = a.name;
+                    select.appendChild(option);
+                  });
+
+                  // "None" option to clear assignment and make employee available
+                  const clearOption = document.createElement('option');
+                  clearOption.value = 'clear';
+                  clearOption.textContent = 'None (-)';
+                  select.appendChild(clearOption);
+
+                  // "Unavailable" option to mark employee as unavailable
+                  const unavailableOption = document.createElement('option');
+                  unavailableOption.value = 'unavailable';
+                  unavailableOption.textContent = 'Unavailable';
+                  select.appendChild(unavailableOption);
+
+                  // Set the current value
+                  if (emp.unavailableWeeks.includes(week)) {
+                    select.value = 'unavailable';
+                  } else if (currentVal !== '') {
+                    select.value = currentVal;
+                  } else {
+                    select.value = '';
+                  }
+
+                  cell.textContent = '';
+                  cell.appendChild(select);
+                  select.focus();
+
+                  // Handle changes in the select dropdown
+                  select.addEventListener('change', (e) => this.handleEmployeeCellChange(e, empIndex, week));
+                  select.addEventListener('blur', () => {
+                    this.renderAll();
+                  }, {once:true});
+                }
+              });
+            }
+
+            row.appendChild(cell);
+          }
+
+          const totalCell = document.createElement('td');
+          totalCell.textContent = totalAssignments;
+          totalCell.classList.add('total-assignments'); // Make Total bold
+          row.appendChild(totalCell);
+
+          tbody.appendChild(row);
+        });
+
+        this.employeeTable.appendChild(tbody);
+
+        // Footer Row Highlighting Week Numbers
+        const tfoot = document.createElement('tfoot');
+        const footerRow = document.createElement('tr');
+        const labelCell = document.createElement('td');
+        labelCell.textContent = 'Week';
+        footerRow.appendChild(labelCell);
+        this.model.weekLabels.forEach((w, i) => {
+          const weekCell = document.createElement('td');
+          weekCell.textContent = `W${i+1}`;
+          const { unassigned, overstaffed } = this.getWeekStaffingStatus(i);
+          if (unassigned || overstaffed) {
+            weekCell.classList.add('highlight-header-footer');
+          }
+          footerRow.appendChild(weekCell);
+        });
+        const emptyFooterCell = document.createElement('td');
+        emptyFooterCell.textContent = '';
+        footerRow.appendChild(emptyFooterCell);
+        tfoot.appendChild(footerRow);
+        this.employeeTable.appendChild(tfoot);
+
+        // Remove any existing highlights
+        Array.from(this.employeeTable.querySelectorAll('td'))
+          .forEach(td => td.classList.remove('highlight-2','highlight-3','highlight-2-orange','highlight-3-orange'));
+
+        // Apply new highlights based on current settings
+        if (this.model.highlightingEnabled || this.model.multiAssignmentHighlightingEnabled) {
+          this.applyHighlighting();
+        }
+      }
+
+      // Retrieves all assignments an employee has in a specific week
+      getEmployeeAssignmentsInWeek(employeeName, week, assignments, schedule) {
+        const result = [];
+        for (const assgn of assignments) {
+          const assignedEmployees = schedule[week][assgn.id] || [];
+          if (assignedEmployees.includes(employeeName)) {
+            result.push(assgn);
+          }
+        }
+        return result;
+      }
+
+      // Renders the Conflicts Section listing any staffing issues
+      renderConflicts() {
+        const { assignments, schedule, currentPositions, weekLabels, totalWeeks } = this.model;
+        this.conflictsList.innerHTML = '';
+        let hasConflicts = false;
+
+        for (let w = 0; w < totalWeeks; w++) {
+          const unassignedMap = {};
+          const overstaffedMap = {};
+
+          assignments.forEach(assgn => {
+            const assigned = schedule[w][assgn.id] || [];
+            const requiredPositions = currentPositions[w][assgn.id];
+            const assignedCount = assigned.filter(name => !['Unassigned','-','Cut'].includes(name)).length;
+            const cutCount = assigned.filter(name => name === 'Cut').length;
+            const unassignedCount = requiredPositions - assignedCount - cutCount;
+            const overstaffedCount = assigned.length - requiredPositions - cutCount;
+
+            if (unassignedCount > 0) {
+              unassignedMap[assgn.name] = (unassignedMap[assgn.name] || 0) + unassignedCount;
+            }
+            if (overstaffedCount > 0) {
+              overstaffedMap[assgn.name] = (overstaffedMap[assgn.name] || 0) + overstaffedCount;
+            }
+          });
+
+          const unassignedEntries = Object.entries(unassignedMap).map(([n,c]) => `${n} (${c})`);
+          const overstaffedEntries = Object.entries(overstaffedMap).map(([n,c]) => `${n} (+${c})`);
+
+          if (unassignedEntries.length > 0 || overstaffedEntries.length > 0) {
+            hasConflicts = true;
+            const li = document.createElement('li');
+            let content = `<strong>Week ${w+1} (${weekLabels[w]}):</strong> `;
+            if (unassignedEntries.length > 0) {
+              content += `Unassigned: ${unassignedEntries.join(', ')}. `;
+            }
+            if (overstaffedEntries.length > 0) {
+              content += `<span class="error">Overstaffed: ${overstaffedEntries.join(', ')}.</span>`;
+            }
+            li.innerHTML = content;
+            this.conflictsList.appendChild(li);
+          }
+        }
+
+        this.conflictsSection.style.display = (hasConflicts && this.model.currentView === 'employee') ? 'block' : 'none';
+      }
+
+      // Applies highlighting to sequences in the Employee View based on current settings
+      applyHighlighting() {
+        if (this.model.currentView !== 'employee') return;
+        const rows = Array.from(this.employeeTable.querySelectorAll('tbody tr'));
+        rows.forEach(row => {
+          const cells = Array.from(row.querySelectorAll('td')).slice(1, -1);
+          if (this.model.highlightingEnabled) {
+            this.highlightSequences(cells, 'highlight-2', false);
+          }
+          if (this.model.multiAssignmentHighlightingEnabled) {
+            this.highlightSequences(cells, 'highlight-2-orange', true);
+          }
+        });
+      }
+
+      // Highlights sequences of assignments based on criteria
+      highlightSequences(cells, className, multi = false) {
+        let seqStart = 0;
+        let seqLength = 1;
+
+        let currentVal = cells[0].textContent;
+        let validVal = !['-','Unavailable','Unassigned'].includes(currentVal);
+        for (let i = 1; i <= cells.length; i++) {
+          const val = i < cells.length ? cells[i].textContent : null;
+          const nextValidVal = val !== null && !['-','Unavailable','Unassigned'].includes(val);
+
+          let same;
+          if (multi) {
+            same = validVal && nextValidVal; 
+          } else {
+            same = (val === currentVal && validVal);
+          }
+
+          if (same) {
+            seqLength++;
+          } else {
+            if (seqLength >= 2 && validVal) {
+              for (let j = seqStart; j < seqStart + seqLength; j++) {
+                cells[j].classList.add(className);
+              }
+            }
+            seqStart = i;
+            seqLength = 1;
+            currentVal = val;
+            validVal = nextValidVal;
+          }
+        }
+      }
+
+      // Handles changes in the Employee View select dropdowns
+      handleEmployeeCellChange(event, empIndex, week) {
+        const select = event.target;
+        const selectedValue = select.value;
+        const emp = this.model.employees[empIndex];
+
+        this.model.pushToUndo();
+
+        // If the employee is currently unavailable but user selected something else:
+        if (emp.unavailableWeeks.includes(week) && selectedValue !== 'unavailable') {
+          // Make the employee available first
+          this.model.toggleAvailabilityManually(emp.name, week);
+        }
+
+        if (selectedValue === '') {
+          // Do nothing, just refresh
+        } else if (selectedValue === 'clear') {
+          // "None" chosen: employee should be available now with no assignment
+          // Clear any existing assignments for that week
+          this.model.assignments.forEach(assgn => {
+            const posAssignments = this.model.schedule[week][assgn.id] || [];
+            posAssignments.forEach((name, posIndex) => {
+              if (name === emp.name) {
+                this.model.clearAssignmentManually(week, assgn.id, posIndex);
+              }
+            });
+          });
+          this.showNotification(`Cleared assignments for ${emp.name} in Week ${week + 1}.`, true);
+        } else if (selectedValue === 'unavailable') {
+          // Make employee unavailable
+          this.model.toggleAvailabilityManually(emp.name, week);
+          this.showNotification(`${emp.name} is now ${this.model.employees[empIndex].unavailableWeeks.includes(week) ? 'Unavailable' : 'Available'} for Week ${week + 1}.`, true);
+        } else {
+          // An assignment ID was chosen
+          const assignmentId = parseInt(selectedValue, 10);
+          this.model.assignEmployeeManually(emp.name, week, assignmentId);
+          const assignedAssgn = this.model.assignments.find(a => a.id === assignmentId);
+          this.showNotification(`Assigned ${emp.name} to "${assignedAssgn.name}" for Week ${week + 1}.`, true);
+        }
+
+        this.model.computeForbiddenGroups(); 
+        this.saveStateCallback();
+        this.renderAll();
+      }
+
+      // Exports the current schedule to a CSV file
+      exportCSV() {
+        const table = this.model.currentView === 'assignment' ? this.assignmentTable : this.employeeTable;
+        const rows = Array.from(table.querySelectorAll('tr'));
+
+        const csvData = [];
+        const spanMap = {};
+
+        rows.forEach((row, rowIndex) => {
+          const cols = Array.from(row.querySelectorAll('th, td'));
+          let csvRow = [];
+          let colIndex = 0;
+
+          cols.forEach(col => {
+            // Handle rowspan by tracking cells spanning multiple rows
+            while (spanMap[colIndex] && spanMap[colIndex].remaining > 0) {
+              csvRow.push(spanMap[colIndex].text);
+              spanMap[colIndex].remaining--;
+              if (spanMap[colIndex].remaining === 0) {
+                delete spanMap[colIndex];
+              }
+              colIndex++;
+            }
+
+            // Get cell data
+            let data = col.textContent.trim();
+            // Handle rowspan
+            const rowspan = parseInt(col.getAttribute('rowspan')) || 1;
+            if (rowspan > 1) {
+              spanMap[colIndex] = {
+                text: data,
+                remaining: rowspan -1
+              };
+            }
+            // Handle colspan
+            const colspan = parseInt(col.getAttribute('colspan')) || 1;
+            for (let i = 0; i < colspan; i++) {
+              csvRow.push(data);
+              if (rowspan >1 && i ==0) { // Only set rowspan for the first colspan
+                spanMap[colIndex] = {
+                  text: data,
+                  remaining: rowspan -1
+                };
+              }
+              colIndex++;
+            }
+          });
+
+          // Handle any remaining spans after processing all cells
+          while (spanMap[colIndex] && spanMap[colIndex].remaining > 0) {
+            csvRow.push(spanMap[colIndex].text);
+            spanMap[colIndex].remaining--;
+            if (spanMap[colIndex].remaining === 0) {
+              delete spanMap[colIndex];
+            }
+            colIndex++;
+          }
+
+          csvData.push(csvRow);
+        });
+
+        // Convert the data to a CSV formatted string
+        const csvContent = csvData.map(row => {
+          return row.map(cell => {
+            if (cell === undefined || cell === null) return '';
+            let data = cell.toString();
+            if (data.includes('"')) data = data.replace(/"/g, '""');
+            if (data.includes(',') || data.includes('"') || data.includes('\n')) {
+              data = `"${data}"`;
+            }
+            return data;
+          }).join(',');
+        }).join('\n');
+
+        // Create a Blob from the CSV data and trigger a download
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        const timestamp = new Date().toISOString().replace(/[:T]/g, '-').split('.')[0];
+        link.setAttribute('download', `schedule_${timestamp}.csv`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        this.showNotification('CSV exported successfully.', true);
+      }
+    }
+
+    // SchedulerController Class: Manages interactions between the DataModel and UIManager
+    class SchedulerController {
+      constructor() {
+        this.model = new DataModel();
+        this.ui = new UIManager(this.model, this.saveState.bind(this)); // Passes the saveState callback
+        this.bindEvents();
+        this.loadState();
+        this.ui.renderAll();
+      }
+
+      // Binds event listeners to UI elements
+      bindEvents() {
+        this.ui.initializeBtn.addEventListener('click', () => this.initializeSchedule());
+        this.ui.updateDataBtn.addEventListener('click', () => this.updateData()); // Binds the Update Data button
+        this.ui.generateBtn.addEventListener('click', () => this.generateSchedule());
+        this.ui.toggleViewBtn.addEventListener('click', () => this.toggleView());
+        this.ui.exportCSVBtn.addEventListener('click', () => this.exportCSV());
+        this.ui.undoBtn.addEventListener('click', () => this.undo());
+        this.ui.redoBtn.addEventListener('click', () => this.redo());
+        // Removed event listeners for original buttons
+
+        // Binds the Run Iterations button for multiple scheduling runs
+        this.ui.runIterationsBtn.addEventListener('click', () => this.runMultipleIterations());
+
+        // Keyboard shortcuts and input change listeners
+        document.addEventListener('keydown', (e) => this.handleKeydown(e));
+        this.ui.startDateEl.addEventListener('change', () => this.saveState());
+        this.ui.employeeDataEl.addEventListener('input', () => this.saveState());
+        this.ui.assignmentsDataEl.addEventListener('input', () => this.saveState());
+        this.ui.weeksEl.addEventListener('input', () => this.saveState());
+        this.ui.iterationCountEl.addEventListener('input', () => this.saveState());
+        this.ui.maxConsecutiveWeeksSingle.addEventListener('input', () => this.saveState());
+        this.ui.maxConsecutiveWeeksMulti.addEventListener('input', () => this.saveState());
+
+        // Bind the Cancel Iterations button
+        this.ui.cancelIterationsBtn.addEventListener('click', () => this.cancelIterations());
+      }
+
+      // Handles keydown events for shortcuts like Delete
+      handleKeydown(event) {
+        if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA' || event.target.tagName === 'SELECT') return;
+        if (event.key === 'Delete' && this.ui.selectedCell) {
+          const cell = this.ui.selectedCell;
+          if (cell.dataset.assignmentId !== undefined) {
+            const week = parseInt(cell.dataset.week, 10);
+            const assignmentId = parseInt(cell.dataset.assignmentId, 10);
+            const positionIndex = parseInt(cell.dataset.positionIndex, 10);
+            const currentVal = this.model.schedule[week][assignmentId][positionIndex];
+            if (!['Unassigned', '-', 'Cut'].includes(currentVal)) {
+              this.model.pushToUndo();
+              this.model.clearAssignmentManually(week, assignmentId, positionIndex);
+              this.model.computeForbiddenGroups(); // Recompute constraints after clearing
+              this.saveState();
+              this.ui.renderAll();
+              this.ui.showNotification('Assignment cleared with Delete key.', true);
+            }
+          } else if (cell.dataset.empIndex !== undefined) {
+            const empIndex = parseInt(cell.dataset.empIndex, 10);
+            const week = parseInt(cell.dataset.week, 10);
+            const emp = this.model.employees[empIndex];
+            this.model.pushToUndo();
+            this.model.assignments.forEach(assgn => {
+              const posAssignments = this.model.schedule[week][assgn.id] || [];
+              posAssignments.forEach((name, posIndex) => {
+                if (name === emp.name) {
+                  this.model.clearAssignmentManually(week, assgn.id, posIndex);
+                }
+              });
+            });
+            this.model.computeForbiddenGroups(); // Recompute constraints after clearing
+            this.saveState();
+            this.ui.renderAll();
+            this.ui.showNotification('Assignment cleared with Delete key.', true);
+          }
+        }
+      }
+
+      // Initializes the schedule based on user inputs
+      initializeSchedule() {
+        try {
+          this.model.pushToUndo();
+          const employeeInput = this.ui.employeeDataEl.value;
+          const assignmentsInput = this.ui.assignmentsDataEl.value;
+          const startDateInput = this.ui.startDateEl.value;
+          const weeksCount = parseInt(this.ui.weeksEl.value, 10);
+
+          this.model.initializeFromInput(employeeInput, assignmentsInput, startDateInput, weeksCount);
+          this.model.applyMaxPercentageTrimming(); // Apply trimming after initialization
+          this.model.computeForbiddenGroups(); // Recompute constraints after trimming
+          this.saveState();
+          this.ui.renderAll();
+          this.ui.showNotification('Schedule initialized successfully.', true);
+        } catch (err) {
+          alert(err.message);
+        }
+      }
+
+      // Updates existing data without reinitializing the entire schedule
+      updateData() {
+        try {
+          this.model.pushToUndo();
+          const employeeInput = this.ui.employeeDataEl.value;
+          const assignmentsInput = this.ui.assignmentsDataEl.value;
+
+          this.model.updateDataFromInput(employeeInput, assignmentsInput);
+          this.model.applyMaxPercentageTrimming(); // Apply trimming after update
+          this.model.computeForbiddenGroups(); // Recompute constraints after trimming
+          this.saveState();
+          this.ui.renderAll();
+          this.ui.showNotification('Data updated successfully.', true);
+        } catch (err) {
+          alert(err.message);
+        }
+      }
+
+      // Generates the schedule based on current data and constraints
+      generateSchedule() {
+        if (this.model.schedule.length === 0) {
+          alert('No schedule initialized. Please initialize first.');
+          return;
+        }
+        this.model.generateSchedule();
+        this.model.applyMaxPercentageTrimming(); // Apply trimming after schedule generation
+        this.model.computeForbiddenGroups(); // Recompute constraints after trimming
+        this.saveState();
+        this.ui.renderAll();
+        this.ui.showNotification('Schedule generated successfully.', true);
+      }
+
+      // Toggles between Assignment and Employee views
+      toggleView() {
+        this.model.toggleView();
+        this.saveState();
+        this.ui.renderAll();
+      }
+
+      // Exports the current schedule as a CSV file
+      exportCSV() {
+        this.ui.exportCSV();
+      }
+
+      // Performs an undo operation
+      undo() {
+        if (this.model.undo()) {
+          this.saveState();
+          this.ui.renderAll();
+          this.ui.showNotification('Undo performed.', true);
+        }
+      }
+
+      // Performs a redo operation
+      redo() {
+        if (this.model.redo()) {
+          this.saveState();
+          this.ui.renderAll();
+          this.ui.showNotification('Redo performed.', true);
+        }
+      }
+
+      // Saves the current state to localStorage for persistence
+      saveState() {
+        const state = {
+          snapshot: this.model.getStateSnapshot(),
+          employeeData: this.ui.employeeDataEl.value,
+          assignmentsData: this.ui.assignmentsDataEl.value,
+          startDate: this.ui.startDateEl.value,
+          weeks: this.ui.weeksEl.value,
+          iterationCount: this.ui.iterationCountEl.value,
+          maxAssignmentPercentage: this.model.maxAssignmentPercentage,
+          highlightingEnabled: this.model.highlightingEnabled,
+          multiAssignmentHighlightingEnabled: this.model.multiAssignmentHighlightingEnabled,
+          maxConsecutiveWeeksSingle: this.model.maxConsecutiveWeeksSingle,
+          maxConsecutiveWeeksMulti: this.model.maxConsecutiveWeeksMulti
+        };
+        localStorage.setItem('schedulerStateImproved', JSON.stringify(state));
+      }
+
+      // Loads the saved state from localStorage if available
+      loadState() {
+        const stored = localStorage.getItem('schedulerStateImproved');
+        if (!stored) return;
+        const { snapshot, employeeData, assignmentsData, startDate, weeks, iterationCount, maxAssignmentPercentage, highlightingEnabled, multiAssignmentHighlightingEnabled, maxConsecutiveWeeksSingle, maxConsecutiveWeeksMulti } = JSON.parse(stored);
+        this.model.restoreState(snapshot);
+        this.model.maxAssignmentPercentage = maxAssignmentPercentage !== undefined ? maxAssignmentPercentage : this.model.defaultSettings.maxAssignmentPercentage;
+        this.model.highlightingEnabled = highlightingEnabled !== undefined ? highlightingEnabled : this.model.defaultSettings.highlightingEnabled;
+        this.model.multiAssignmentHighlightingEnabled = multiAssignmentHighlightingEnabled !== undefined ? multiAssignmentHighlightingEnabled : this.model.defaultSettings.multiAssignmentHighlightingEnabled;
+        this.model.maxConsecutiveWeeksSingle = maxConsecutiveWeeksSingle !== undefined ? maxConsecutiveWeeksSingle : this.model.defaultSettings.maxConsecutiveWeeksSingle;
+        this.model.maxConsecutiveWeeksMulti = maxConsecutiveWeeksMulti !== undefined ? maxConsecutiveWeeksMulti : this.model.defaultSettings.maxConsecutiveWeeksMulti;
+        
+        this.ui.employeeDataEl.value = employeeData || '';
+        this.ui.assignmentsDataEl.value = assignmentsData || '';
+        this.ui.startDateEl.value = startDate || '';
+        this.ui.weeksEl.value = weeks || '12';
+        this.ui.iterationCountEl.value = iterationCount || '50';
+
+        // Set the input values for settings
+        this.ui.maxAssignmentPercentageInput.value = (this.model.maxAssignmentPercentage * 100).toString();
+        this.ui.identicalWeeksToggle.checked = this.model.highlightingEnabled;
+        this.ui.consecutiveWeeksToggle.checked = this.model.multiAssignmentHighlightingEnabled;
+        this.ui.maxConsecutiveWeeksSingle.value = this.model.maxConsecutiveWeeksSingle;
+        this.ui.maxConsecutiveWeeksMulti.value = this.model.maxConsecutiveWeeksMulti;
+      }
+
+      // Computes a score for the current schedule to evaluate its quality
+      computeScheduleScore(model) {
+        let unassignedCount = 0;
+        let assignmentOrderPenalty = 0;
+        for (let w = 0; w < model.totalWeeks; w++) {
+          for (let i = 0; i < model.assignments.length; i++) {
+            const assgn = model.assignments[i];
+            const assigned = model.schedule[w][assgn.id] || [];
+            const requiredPositions = model.currentPositions[w][assgn.id];
+            const assignedCount = assigned.filter(name => !['Unassigned', '-', 'Cut'].includes(name)).length;
+            const cutCount = assigned.filter(name => name === 'Cut').length;
+            const weekUnassigned = requiredPositions - assignedCount - cutCount;
+            const overstaffedCount = assigned.length - requiredPositions - cutCount;
+            if (weekUnassigned > 0) {
+              unassignedCount += weekUnassigned;
+              // Higher penalty for unassigned positions in earlier assignments
+              // Assign weight as (assignments.length - i)
+              assignmentOrderPenalty += weekUnassigned * (model.assignments.length - i);
+            }
+          }
+        }
+
+        // Calculate balance score based on standard deviation of assignments
+        const counts = model.employees.map(emp => emp.count);
+        const mean = counts.reduce((a, b) => a + b, 0) / counts.length;
+        const variance = counts.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / counts.length;
+        const balanceScore = Math.sqrt(variance); // Standard deviation
+
+        return [unassignedCount, assignmentOrderPenalty, balanceScore];
+      }
+
+      // Runs multiple iterations of schedule generation to find the best schedule
+      async runMultipleIterations() {
+        if (this.model.schedule.length === 0) {
+          alert('No schedule initialized. Please initialize first.');
+          return;
+        }
+
+        const iterations = parseInt(this.ui.iterationCountEl.value, 10);
+        if (isNaN(iterations) || iterations < 1) {
+          alert('Please enter a valid number of iterations (minimum 1).');
+          return;
+        }
+
+        // Initialize cancellation flag
+        this.iterationsCancelled = false;
+        this.onCancelIterations = () => {
+          this.iterationsCancelled = true;
+        };
+
+        // Disable the Run Iterations button and show the Cancel button
+        this.ui.runIterationsBtn.disabled = true;
+        this.ui.runIterationsBtn.innerHTML = 'Running... <span class="loading-spinner"></span>'; // Updated to use innerHTML
+        this.ui.cancelIterationsBtn.style.display = 'inline-block';
+
+        // Initialize best score and best schedule
+        let bestScore = this.computeScheduleScore(this.model);
+        let bestSchedule = JSON.parse(JSON.stringify(this.model.schedule)); // Deep clone of the current schedule
+        let completedIterations = 0;
+
+        // Save initial state before iterations
+        this.model.pushToUndo();
+
+        // Show initial notification
+        this.ui.showNotification('Running iterations...', false);
+
+        for (let i = 0; i < iterations; i++) {
+          if (this.iterationsCancelled) {
+            this.ui.showNotification(`Iterations cancelled at iteration ${completedIterations}/${iterations}.`, true);
+            break;
+          }
+
+          this.model.generateSchedule(false); // Do not push to undo during iterations
+          this.model.applyMaxPercentageTrimming(); // Apply trimming after schedule generation
+          this.model.computeForbiddenGroups(); // Recompute constraints after trimming
+          const score = this.computeScheduleScore(this.model);
+
+          // Compare scores: lower unassigned, then lower penalty, then lower balance score
+          if (
+            score[0] < bestScore[0] ||
+            (score[0] === bestScore[0] && score[1] < bestScore[1]) ||
+            (score[0] === bestScore[0] && score[1] === bestScore[1] && score[2] < bestScore[2])
+          ) {
+            bestScore = score;
+            bestSchedule = JSON.parse(JSON.stringify(this.model.schedule)); // Update best schedule
+          }
+
+          completedIterations++;
+
+          // Provide periodic feedback every 10 iterations or on the last iteration
+          if ((i + 1) % 10 === 0 || i === iterations - 1) {
+            this.ui.showNotification(`Iteration ${i + 1}/${iterations} completed.`, false);
+            // Allow the UI to update
+            await new Promise(resolve => setTimeout(resolve, 0));
+          }
+        }
+
+        if (!this.iterationsCancelled) {
+          // Restore the best schedule found
+          this.model.schedule = bestSchedule;
+          this.model.computeForbiddenGroups(); // Recompute constraints based on the best schedule
+          this.saveState(); // Persist the best state to localStorage
+          this.ui.renderAll();
+          this.ui.showNotification(`Best schedule loaded with ${bestScore[0]} unassigned positions, an assignment order penalty of ${bestScore[1]}, and a balance score of ${bestScore[2].toFixed(2)} from ${iterations} iterations.`, true);
+        }
+
+        // Re-enable the button and hide the Cancel button
+        this.ui.runIterationsBtn.disabled = false;
+        this.ui.runIterationsBtn.innerHTML = 'Run Iterations'; // Reset innerHTML to remove spinner
+        this.ui.cancelIterationsBtn.style.display = 'none';
+        this.onCancelIterations = null;
+      }
+
+      // Cancels the ongoing iterations
+      cancelIterations() {
+        if (this.onCancelIterations) {
+          this.onCancelIterations();
+        }
+      }
+    }
+
+    // Initialize the SchedulerController once the DOM is fully loaded
+    document.addEventListener('DOMContentLoaded', () => {
+      new SchedulerController();
+    });
+  </script>
+</body>
+</html>
